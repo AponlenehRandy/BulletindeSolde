@@ -1,0 +1,52 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:weightSum="4"
+    android:orientation="horizontal"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin">
+
+    <TextView
+        android:id="@+id/checkout_matricle"
+        android:layout_weight="1"
+        android:layout_width="100dp"
+        android:layout_height="35dp"
+        android:text="matricle"
+        android:textSize="@dimen/textsize"
+        android:textAlignment="center"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/checkout_month"
+        android:layout_weight="1"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:text="month"
+        android:textSize="@dimen/textsize"
+        android:textAlignment="center"
+        android:gravity="center"/>
+
+
+    <TextView
+        android:id="@+id/checkout_year"
+        android:layout_weight="1"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:text="year"
+        android:textSize="@dimen/textsize"
+        android:textAlignment="center"
+        android:gravity="center"/>
+
+    <ImageView
+        android:clickable="true"
+        android:id="@+id/checkoout_delete"
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:src="@drawable/ic_delete" />
+
+</LinearLayout>

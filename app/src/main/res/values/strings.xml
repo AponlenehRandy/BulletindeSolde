@@ -1,0 +1,80 @@
+<resources>
+    <string name="app_name">Bulletindesolde</string>
+    <string name="next">NEXT</string>
+    <string name="skip">SKIP</string>
+    <string name="start">GOT IT</string>
+
+    <string name="slide_1_title">Hello Food!</string>
+    <string name="slide_1_desc">The easiest way to order food from your favourite restaurant!</string>
+
+    <string name="slide_2_title">Movie Tickets</string>
+    <string name="slide_2_desc">Book movie tickets for your family and friends!</string>
+
+    <string name="slide_3_title">Great Discounts</string>
+    <string name="slide_3_desc">Best discounts on every single service we offer!</string>
+
+    <string name="slide_4_title">World Travel</string>
+    <string name="slide_4_desc">Book tickets of any transportation and travel the world!</string>
+
+    <string name="name">Name</string>
+    <string name="password_verification">Password verification</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="login">Login</string>
+    <string name="no_account_yet_create_one">No account yet? Create one</string>
+    <string name="already_a_member_login">Already a member? Login</string>
+    <string name="create_account">Create Account</string>
+    <string name="agreement">I agree to </string>
+    <string name="terms">terms and condition</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="requestTitle">Request</string>
+    <string name="settingTitle">Setting</string>
+    <string name="messageTitle">Message</string>
+    <string name="historyTitle">History</string>
+    <string name="documentTitle">Document</string>
+    <string name="input_matricle">Matricule</string>
+    <string name="add_to_cart">Add to cart</string>
+    <string name="enter_matricle_month_and_year">Enter matricle,select month and year</string>
+
+    //Months of the year
+    <string name="Jan">January</string>
+    <string name="Feb">Febuary</string>
+    <string name="March">March</string>
+    <string name="Apr">April</string>
+    <string name="May">May</string>
+    <string name="Jun">June</string>
+    <string name="July">July</string>
+    <string name="Aug">August</string>
+    <string name="Sep">September</string>
+    <string name="Oct">October</string>
+    <string name="Nov">November</string>
+    <string name="Dec">December</string>
+    <string name="checkout">Checkout</string>
+    <string name="login_error">Email and Password credential doen\'t match</string>
+    <string name="insert_another_email">Try another email address</string>
+    <string name="back">Back</string>
+    <string name="password_forgotten">Forgot password?</string>
+    <string name="action_logout">Logout</string>
+    <string name="registration_error"><![CDATA[Email address already take be another user>Please try a different email address]]></string>
+
+
+    <string-array name="months">
+        <item>@string/Jan</item>
+        <item>@string/Feb</item>
+        <item>@string/March</item>
+        <item>@string/Apr</item>
+        <item>@string/May</item>
+        <item>@string/Jun</item>
+        <item>@string/July</item>
+        <item>@string/Aug</item>
+        <item>@string/Sep</item>
+        <item>@string/Oct</item>
+        <item>@string/Nov</item>
+        <item>@string/Dec</item>
+    </string-array>
+</resources>

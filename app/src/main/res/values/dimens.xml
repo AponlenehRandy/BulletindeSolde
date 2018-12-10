@@ -16,5 +16,5 @@
     <dimen name="horizontal_margin_request">12dp</dimen>
     <dimen name="horizontal_margin_requestbutton">12dp</dimen>
     <dimen name="heightrequestfields">40dp</dimen>
-    <dimen name="heightrequestbuttons">40dp</dimen>
+    <dimen name="activity_margin">16dp</dimen>
 </resources>

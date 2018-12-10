@@ -2,7 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.randyp.bulletindesolde">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
 
     <application
         android:name=".Activities.AppController.AppController"
@@ -12,6 +16,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service android:name=".Activities.Sync_framework.BDSAuthenticatorService">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+
+        <receiver
+            android:name=".Activities.InternetCheck.ConnectivityReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+
         <activity android:name=".Activities.Activities.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,10 +51,11 @@
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme" />
         <activity android:name=".Activities.Activities.InfoActivity" />
-        <activity android:name=".Activities.Activities.LoginErrorActivity" />
         <activity android:name=".Activities.Activities.LoginsuccessActivity" />
         <activity android:name=".Activities.Activities.SignupSuccessActivity" />
-        <activity android:name=".Activities.Activities.signupErrorActivity"></activity>
+        <activity android:name=".Activities.Activities.AuthenticatorActivity" />
+        <activity android:name=".Activities.Activities.CreateAccountActivity" />
+        <activity android:name=".Activities.Activities.InternetError"></activity>
     </application>
 
 </manifest>

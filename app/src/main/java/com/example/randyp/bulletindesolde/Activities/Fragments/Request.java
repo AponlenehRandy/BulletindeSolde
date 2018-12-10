@@ -1,9 +1,7 @@
 package com.example.randyp.bulletindesolde.Activities.Fragments;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,16 +20,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.randyp.bulletindesolde.Activities.Activities.LoginActivity;
-import com.example.randyp.bulletindesolde.Activities.Activities.LoginErrorActivity;
-import com.example.randyp.bulletindesolde.Activities.Activities.LoginsuccessActivity;
 import com.example.randyp.bulletindesolde.Activities.Adapters.Checkout;
 import com.example.randyp.bulletindesolde.Activities.Adapters.CheckoutAdapter;
 import com.example.randyp.bulletindesolde.Activities.AppController.AppController;
 import com.example.randyp.bulletindesolde.Activities.AppController.Appconfig;
 import com.example.randyp.bulletindesolde.Activities.Database.Model.DatabaseHelper;
 import com.example.randyp.bulletindesolde.Activities.Decoration.MyDividerItemDecoration;
-import com.example.randyp.bulletindesolde.Activities.Preferences.SessionManager;
 import com.example.randyp.bulletindesolde.R;
 
 import org.json.JSONException;
@@ -48,6 +42,7 @@ public class Request extends android.support.v4.app.Fragment {
     Spinner month,year;
     EditText matricle;
     Button add_to_cart;
+    Button checkOut;
     List monthList =new ArrayList<String>();
     List yearList =new ArrayList<String>();
     //checkout recycler view
@@ -71,6 +66,7 @@ public class Request extends android.support.v4.app.Fragment {
         year = view.findViewById(R.id.request_year);
         matricle=view.findViewById(R.id.request_matricle);
         add_to_cart=view.findViewById(R.id.add_to_cart);
+        checkOut = view.findViewById(R.id.checkout);
 
         // Initializing an ArrayAdapter for the months and the year
         final Calendar calendar=Calendar.getInstance();
@@ -119,6 +115,14 @@ public class Request extends android.support.v4.app.Fragment {
                     AlertDialog dialog = builder.create();
                     dialog.show();
                 }
+            }
+        });
+
+        checkOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Checkout_bottom_sheetFragment checkout_bottom_sheetFragment = Checkout_bottom_sheetFragment.newInstance();
+                checkout_bottom_sheetFragment.show(getFragmentManager(),"add_checkout_bottom_sheet");
             }
         });
 

@@ -1,8 +1,13 @@
 package com.example.randyp.bulletindesolde.Activities.Activities;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -11,10 +16,12 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -28,6 +35,7 @@ import com.example.randyp.bulletindesolde.Activities.Fragments.History;
 import com.example.randyp.bulletindesolde.Activities.Fragments.Message;
 import com.example.randyp.bulletindesolde.Activities.Fragments.Request;
 import com.example.randyp.bulletindesolde.Activities.Fragments.Setting;
+import com.example.randyp.bulletindesolde.Activities.InternetCheck.ConnectivityReceiver;
 import com.example.randyp.bulletindesolde.Activities.Preferences.SessionManager;
 import com.example.randyp.bulletindesolde.R;
 
@@ -38,12 +46,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,ConnectivityReceiver.ConnectivityReceiverListener {
 
     private static final String TAG = "MainActivity";
     private DatabaseHelper db;
     TextView userName, userEmail;
     SessionManager session;
+
+    private static final int request_code = 102;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,9 +66,11 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                displaySlecetedScreen(R.id.nav_Request);
+                displaySelectionScreen(R.id.nav_Request);
             }
         });
+
+
 
         // SqLite database handler
         db = new DatabaseHelper(getApplicationContext());
@@ -90,7 +102,7 @@ public class MainActivity extends AppCompatActivity
         userEmail.setText(email);
 
         //add this line to display request form when the activity is loaded
-        displaySlecetedScreen(R.id.nav_Request);
+        displaySelectionScreen(R.id.nav_Request);
     }
 
     @Override
@@ -125,19 +137,21 @@ public class MainActivity extends AppCompatActivity
             // Fetching user's token details from sqlite
             HashMap<String, String> user = db.getUserDetails();
             String token = user.get("verification_token");
-            Logout(token);
+            String email = user.get("email");
+            Logout(token,email);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void Logout(final String token) {
+
+    private void Logout(final String token, final String email) {
         // Tag used to cancel the request
         String tag_json_obj = "json_obj_req";
 
         final ProgressDialog pDialog = new ProgressDialog(this);
-        pDialog.setMessage("Logging out...");
+        pDialog.setMessage(getResources().getString(R.string.logging_out));
         pDialog.setCancelable(false);
         pDialog.show();
 
@@ -153,6 +167,7 @@ public class MainActivity extends AppCompatActivity
                 Appconfig.URL_LOGOUT, user_params,
                 new Response.Listener<JSONObject>() {
 
+                    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d(TAG, "onResponse: "+response.toString()+token);
@@ -173,6 +188,19 @@ public class MainActivity extends AppCompatActivity
                                     //delete user data in the user data table
                                     db.deleteUsers();
 
+                                    //removing account under account manager
+
+                                    String accountype= "com.BDS";
+                                    AccountManager accountManager = AccountManager.get(getApplicationContext());
+                                    Account account = new Account(email,accountype);
+                                    Boolean success = accountManager.removeAccountExplicitly(account);
+
+
+                                    if (success){
+                                        showErrormsg("user account successfully removed in the account manager");
+                                    }else{
+                                        showErrormsg("failure to remove the account in account manager");
+                                    }
 
                                     /**
                                      * Launching login activity for the next login
@@ -219,12 +247,12 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
 
         //calling the method displaySelectedScreen and passing the id of the selected menu
-        displaySlecetedScreen(item.getItemId());
+        displaySelectionScreen(item.getItemId());
         //make the method blank
         return true;
     }
 
-    private void displaySlecetedScreen (int itemId){
+    private void displaySelectionScreen(int itemId){
 
         //creating the fragment object which is selected
         android.support.v4.app.Fragment fragment = null;
@@ -258,5 +286,70 @@ public class MainActivity extends AppCompatActivity
         drawerLayout.closeDrawer(GravityCompat.START);
 
     }
+
+    private void showErrormsg(String error) {
+
+        Toast.makeText(getApplicationContext(),error,Toast.LENGTH_SHORT).show();
+    }
+
+
+    private void checkConnection() {
+        boolean isConnected = ConnectivityReceiver.isConnected();
+        if (isConnected) {
+            //show nothing if its connected
+        } else {
+            //move the connection lose activity
+            Intent data = new Intent(this,InternetError.class);
+            startActivityForResult(data,request_code);
+        }
+    }
+
+
+    /**
+     * These three next method should be copied to all other activitiest requiring
+     * network change listener
+     */
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //Register connection status listener
+        AppController.getInstance().setConnectivityListener(this);
+    }
+
+    /**
+     * Callback will be triggered when there is change in
+     * network connection
+     */
+
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        connectionlose(isConnected);
+    }
+
+    /**
+     * Here is were the varoiuusu action for the connection lose or gain is taken care of
+     * using the toast msg as a method of notifying the user for now
+     * @param isConnected
+     */
+    private void connectionlose(boolean isConnected) {
+        if (isConnected) {
+            //show nothing if its connected
+        } else {
+            //move the connection lose activity
+            Intent data = new Intent(this,InternetError.class);
+            startActivityForResult(data,request_code);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if ((requestCode == request_code)&&(resultCode==RESULT_OK)){
+
+        }
+    }
+
 
 }

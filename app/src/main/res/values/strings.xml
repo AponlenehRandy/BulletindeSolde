@@ -20,9 +20,9 @@
     <string name="password_verification">Password verification</string>
     <string name="password">Password</string>
     <string name="email">Email</string>
-    <string name="login">Login</string>
+    <string name="login">Log in</string>
     <string name="no_account_yet_create_one">No account yet? Create one</string>
-    <string name="already_a_member_login">Already a member? Login</string>
+    <string name="already_a_member_login">Already a member? Log in</string>
     <string name="create_account">Create Account</string>
     <string name="agreement">I agree to </string>
     <string name="terms">terms and condition</string>
@@ -55,12 +55,20 @@
     <string name="Nov">November</string>
     <string name="Dec">December</string>
     <string name="checkout">Checkout</string>
-    <string name="login_error">Email and Password credential doen\'t match</string>
+    <string name="login_error">The email and password you entered did not match our records. Please double-check and try again.</string>
     <string name="insert_another_email">Try another email address</string>
     <string name="back">Back</string>
-    <string name="password_forgotten">Forgot password?</string>
-    <string name="action_logout">Logout</string>
-    <string name="registration_error"><![CDATA[Email address already take be another user>Please try a different email address]]></string>
+    <string name="action_logout">Log out</string>
+    <string name="registration_error"><![CDATA[Email address already take be another user.Please try a different email address]]></string>
+    <string name="proceed_payment">PROCEED PAYMENT</string>
+    <string name="logging_in">Logging in</string>
+    <string name="creating_account">Creating account ...</string>
+    <string name="server_error">Oops! Something went wrong. Try again later</string>
+    <string name="check_agreement_error">You have to accept to terms and conditions before registartion</string>
+    <string name="logging_out">Logging out...</string>
+    <string name="try_again">Try again</string>
+    <string name="no_connection">No connection</string>
+    <string name="an_internet_error_occured_please_try_again">An internet error occured, please try again</string>
 
 
     <string-array name="months">

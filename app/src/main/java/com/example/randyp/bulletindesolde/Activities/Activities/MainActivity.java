@@ -4,13 +4,14 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -30,15 +31,15 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.randyp.bulletindesolde.Activities.AppController.AppController;
 import com.example.randyp.bulletindesolde.Activities.AppController.Appconfig;
 import com.example.randyp.bulletindesolde.Activities.Database.Model.DatabaseHelper;
-import com.example.randyp.bulletindesolde.Activities.Fragments.Document;
 import com.example.randyp.bulletindesolde.Activities.Fragments.History;
-import com.example.randyp.bulletindesolde.Activities.Fragments.Message;
+import com.example.randyp.bulletindesolde.Activities.Fragments.Inbox;
 import com.example.randyp.bulletindesolde.Activities.Fragments.Request;
 import com.example.randyp.bulletindesolde.Activities.Fragments.Setting;
 import com.example.randyp.bulletindesolde.Activities.InternetCheck.ConnectivityReceiver;
 import com.example.randyp.bulletindesolde.Activities.Preferences.SessionManager;
 import com.example.randyp.bulletindesolde.R;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final String TAG = "MainActivity";
     private DatabaseHelper db;
-    TextView userName, userEmail;
+    TextView userName, userEmail,InboxCount,RequestCount,HistoryCount;
     SessionManager session;
 
     private static final int request_code = 102;
@@ -97,13 +98,29 @@ public class MainActivity extends AppCompatActivity
         userName = headerView.findViewById(R.id.user_name);
         userEmail = headerView.findViewById(R.id.user_email);
 
+        /**
+         * Retrieving instances of the inbox, request and
+         * history count from teh navigation menue items
+         */
+
+        InboxCount=(TextView) MenuItemCompat.getActionView(navigationView.getMenu().
+                findItem(R.id.nav_inbox));
+        RequestCount=(TextView) MenuItemCompat.getActionView(navigationView.getMenu().
+                findItem(R.id.nav_Request));
+        HistoryCount=(TextView) MenuItemCompat.getActionView(navigationView.getMenu().
+                findItem(R.id.nav_History));
+
+        //This method will initialize the count value
+        initializeCountDrawer();
+
         //change the user name based on data from the data base
         userName.setText(name);
         userEmail.setText(email);
 
         //add this line to display request form when the activity is loaded
-        displaySelectionScreen(R.id.nav_Request);
+        displaySelectionScreen(R.id.nav_inbox);
     }
+
 
     @Override
     public void onBackPressed() {
@@ -144,7 +161,6 @@ public class MainActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
-
 
     private void Logout(final String token, final String email) {
         // Tag used to cancel the request
@@ -252,26 +268,23 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void displaySelectionScreen(int itemId){
+    public void displaySelectionScreen(int itemId){
 
         //creating the fragment object which is selected
         android.support.v4.app.Fragment fragment = null;
 
         switch (itemId){
+            case R.id.nav_inbox:
+                fragment = new Inbox();
+                break;
             case R.id.nav_Request:
                 fragment = new Request();
                 break;
             case R.id.nav_History:
                 fragment = new History();
                 break;
-            case R.id.nav_messages:
-                fragment = new Message();
-                break;
             case R.id.nav_setting:
                 fragment = new Setting();
-                break;
-            case R.id.nav_document:
-                fragment = new Document();
                 break;
         }
 
@@ -292,24 +305,6 @@ public class MainActivity extends AppCompatActivity
         Toast.makeText(getApplicationContext(),error,Toast.LENGTH_SHORT).show();
     }
 
-
-    private void checkConnection() {
-        boolean isConnected = ConnectivityReceiver.isConnected();
-        if (isConnected) {
-            //show nothing if its connected
-        } else {
-            //move the connection lose activity
-            Intent data = new Intent(this,InternetError.class);
-            startActivityForResult(data,request_code);
-        }
-    }
-
-
-    /**
-     * These three next method should be copied to all other activitiest requiring
-     * network change listener
-     */
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -322,7 +317,6 @@ public class MainActivity extends AppCompatActivity
      * Callback will be triggered when there is change in
      * network connection
      */
-
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
         connectionlose(isConnected);
@@ -351,5 +345,185 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void initializeCountDrawer() {
+        getHistoryCount();
+        getInboxCount();
+        getRequestCount();
+    }
+
+    private void getInboxCount(){
+        //Send request to the server with the user token, matricle,month and year
+        // Tag used to cancel the request
+        final String tag_json_obj = "json_obj_req";
+
+        // SqLite database handler
+        db = new DatabaseHelper(this);
+
+        // Fetching user verification token from sqlite
+        HashMap<String, String> user = db.getUserDetails();
+        final String token = user.get("verification_token");
+        //Passing login parameters
+        Map<String,String> params = new HashMap<>();
+        params.put("token",token);
+
+        JSONObject user_params = new JSONObject(params);
+
+        //Sending request for inbox count
+
+        final JsonObjectRequest jsonObjReq = new JsonObjectRequest(com.android.volley.Request.Method.POST,
+                Appconfig.URL_REQUEST_VALIDATED, user_params,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            //checking for authorization error
+                            boolean error = response.getBoolean("authorized");
+
+                            //checking for request error
+                            if (error){
+                                JSONArray validatedArray = response.getJSONArray("validated");
+
+                                if (validatedArray.length()!=0){
+                                    InboxCount.setGravity(Gravity.CENTER_VERTICAL);
+                                    InboxCount.setTypeface(null,Typeface.BOLD);
+                                    InboxCount.setTextColor(getResources().getColor(R.color.colorAccent));
+                                    //count is added
+                                    String count = String.valueOf(validatedArray.length());
+                                    InboxCount.setText(count);
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        });
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
+    }
+
+    private void getRequestCount(){
+
+
+        //Send request to the server with the user token, matricle,month and year
+        // Tag used to cancel the request
+        final String tag_json_obj = "json_obj_req";
+
+        // SqLite database handler
+        db = new DatabaseHelper(this);
+
+        // Fetching user verification token from sqlite
+        HashMap<String, String> user = db.getUserDetails();
+        final String token = user.get("verification_token");
+        //Passing login parameters
+        Map<String,String> params = new HashMap<>();
+        params.put("token",token);
+
+        JSONObject user_params = new JSONObject(params);
+
+        //Sending request for inbox count
+
+        final JsonObjectRequest jsonObjReq = new JsonObjectRequest(com.android.volley.Request.Method.POST,
+                Appconfig.URL_REQUEST_SAVED, user_params,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            //checking for authorization error
+                            boolean error = response.getBoolean("authorized");
+
+                            //checking for request error
+                            if (error){
+                                JSONArray validatedArray = response.getJSONArray("saved");
+
+                                if (validatedArray.length()!=0){
+                                    RequestCount.setGravity(Gravity.CENTER_VERTICAL);
+                                    RequestCount.setTypeface(null,Typeface.BOLD);
+                                    RequestCount.setTextColor(getResources().getColor(R.color.colorAccent));
+                                    //count is added
+                                    String count = String.valueOf(validatedArray.length());
+                                    RequestCount.setText(count);
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        });
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
+    }
+
+    private void getHistoryCount(){
+
+
+        //Send request to the server with the user token, matricle,month and year
+        // Tag used to cancel the request
+        final String tag_json_obj = "json_obj_req";
+
+        // SqLite database handler
+        db = new DatabaseHelper(this);
+
+        // Fetching user verification token from sqlite
+        HashMap<String, String> user = db.getUserDetails();
+        final String token = user.get("verification_token");
+        //Passing login parameters
+        Map<String,String> params = new HashMap<>();
+        params.put("token",token);
+
+        JSONObject user_params = new JSONObject(params);
+
+        //Sending request for inbox count
+
+        final JsonObjectRequest jsonObjReq = new JsonObjectRequest(com.android.volley.Request.Method.POST,
+                Appconfig.URL_REQUEST_PENDING, user_params,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            //checking for authorization error
+                            boolean error = response.getBoolean("authorized");
+
+                            //checking for request error
+                            if (error){
+                                JSONArray validatedArray = response.getJSONArray("pending");
+
+                                if (validatedArray.length()!=0){
+                                    HistoryCount.setGravity(Gravity.CENTER_VERTICAL);
+                                    HistoryCount.setTypeface(null,Typeface.BOLD);
+                                    HistoryCount.setTextColor(getResources().getColor(R.color.colorAccent));
+                                    //count is added
+                                    String count = String.valueOf(validatedArray.length());
+                                    HistoryCount.setText(count);
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        });
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
+    }
 
 }

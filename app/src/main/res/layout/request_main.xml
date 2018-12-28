@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="2dp">
@@ -42,7 +40,6 @@
         <!-- Request matricle -->
 
         <EditText
-            android:textAlignment="center"
             android:id="@+id/request_matricle"
             android:layout_width="match_parent"
             android:layout_height="@dimen/heightrequestfields"
@@ -51,17 +48,15 @@
             android:layout_marginRight="@dimen/horizontal_margin_request"
             android:layout_marginTop="8dp"
             android:background="@drawable/widget_border"
-            android:textAllCaps="false"
-            android:paddingLeft="10dp"
             android:hint="@string/input_matricle"
+            android:paddingLeft="10dp"
+            android:textAlignment="center"
+            android:textAllCaps="false"
             android:textSize="@dimen/textsize" />
-
 
 
         <!-- request month -->
         <Spinner
-            android:autofillHints="@string/input_matricle"
-            android:textAlignment="center"
             android:id="@+id/request_month"
             android:layout_width="match_parent"
             android:layout_height="@dimen/heightrequestfields"
@@ -69,13 +64,13 @@
             android:layout_marginLeft="@dimen/horizontal_margin_request"
             android:layout_marginRight="@dimen/horizontal_margin_request"
             android:layout_marginTop="4dp"
-            android:background="@drawable/widget_border" />
+            android:autofillHints="@string/input_matricle"
+            android:background="@drawable/widget_border"
+            android:textAlignment="center" />
 
 
         <!-- request year -->
         <Spinner
-            android:autofillHints="@string/input_matricle"
-            android:textAlignment="center"
             android:id="@+id/request_year"
             android:layout_width="match_parent"
             android:layout_height="@dimen/heightrequestfields"
@@ -83,7 +78,9 @@
             android:layout_marginLeft="@dimen/horizontal_margin_request"
             android:layout_marginRight="@dimen/horizontal_margin_request"
             android:layout_marginTop="4dp"
-            android:background="@drawable/widget_border" />
+            android:autofillHints="@string/input_matricle"
+            android:background="@drawable/widget_border"
+            android:textAlignment="center" />
 
         <Button
             android:id="@+id/add_to_cart"
@@ -93,6 +90,7 @@
             android:layout_marginLeft="@dimen/horizontal_margin_requestbutton"
             android:layout_marginRight="@dimen/horizontal_margin_requestbutton"
             android:layout_marginTop="2dp"
+            android:onClick="saveRequest"
             android:text="@string/add_to_cart"
             android:textAlignment="center"
             android:textAllCaps="true"
@@ -127,10 +125,6 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginBottom="2dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:padding="8dp"
                 app:layout_constraintBottom_toTopOf="@+id/checkout"
@@ -142,7 +136,11 @@
                     android:id="@+id/checkout_recycler_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:scrollbars="vertical" />
+                    android:scrollbars="vertical"
+                    app:layout_constraintBottom_toTopOf="@+id/checkout"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
             </ScrollView>
 
@@ -166,7 +164,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/scrollView2" />
         </android.support.constraint.ConstraintLayout>
     </LinearLayout>
-
 
 
 </android.support.constraint.ConstraintLayout>

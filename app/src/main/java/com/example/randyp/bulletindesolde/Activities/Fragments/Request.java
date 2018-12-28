@@ -1,6 +1,7 @@
 package com.example.randyp.bulletindesolde.Activities.Fragments;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,6 +21,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.randyp.bulletindesolde.Activities.Activities.MainActivity;
 import com.example.randyp.bulletindesolde.Activities.Adapters.Checkout;
 import com.example.randyp.bulletindesolde.Activities.Adapters.CheckoutAdapter;
 import com.example.randyp.bulletindesolde.Activities.AppController.AppController;
@@ -28,6 +30,7 @@ import com.example.randyp.bulletindesolde.Activities.Database.Model.DatabaseHelp
 import com.example.randyp.bulletindesolde.Activities.Decoration.MyDividerItemDecoration;
 import com.example.randyp.bulletindesolde.R;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -50,8 +53,6 @@ public class Request extends android.support.v4.app.Fragment {
     private CheckoutAdapter checkoutAdapter;
     RecyclerView recyclerView;
     private DatabaseHelper db;
-
-
 
     @Nullable
     @Override
@@ -95,8 +96,8 @@ public class Request extends android.support.v4.app.Fragment {
                 String matricleModel2 = "^([A-za-z]{1})(\\d{6})$";
 
                 if (requestMatricle.matches(matricleModel1) || requestMatricle.matches(matricleModel2)){
-                    // matricle number correct, gherefore send request to the database
-                    sendRequest(token ,requestMatricle,
+                    // matricule number correct, therefore save request to the server
+                    saveRequest(token ,requestMatricle,
                             String.valueOf((month.getSelectedItemPosition()+1)),
                             year.getSelectedItem().toString().trim());
                 }else {
@@ -171,12 +172,15 @@ public class Request extends android.support.v4.app.Fragment {
             }
         });
 
-        // Adapter for recycler view
+        // Adapter for recycler view for save payslip
         recyclerView = view.findViewById(R.id.checkout_recycler_view);
         checkoutAdapter = new CheckoutAdapter(checkoutList);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.addItemDecoration(new MyDividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL, 16));
         recyclerView.setAdapter(checkoutAdapter);
+
+        //loading content from user's table on the server
+        loadSaveRequest();
 
         return view;
 
@@ -215,13 +219,7 @@ public class Request extends android.support.v4.app.Fragment {
         return yearList;
     }
 
-    private void prepareCheckoutData(String matricle,String month,String year) {
-        Checkout checkout = new Checkout(matricle, month, year);
-        checkoutList.add(checkout);
-        checkoutAdapter.notifyDataSetChanged();
-    }
-
-    private void sendRequest(String token, String matricle,String month,String year){
+    private void saveRequest(String token, String matricle,String month,String year){
 
         //Send request to the server with the user token, matricle,month and year
         // Tag used to cancel the request
@@ -259,16 +257,13 @@ public class Request extends android.support.v4.app.Fragment {
                                      * request succesful
                                      * parsing data to the user request table
                                      */
-
-
-
+                                    loadSaveRequest();
+                                    ((MainActivity)getActivity()).initializeCountDrawer();
 
                                 }else{
                                     /**
                                      * Creating an activity to display the user error info\
                                      */
-
-
                                 }
                             } //checking for authorization error
                             else if (response.has("authorized")){
@@ -315,13 +310,105 @@ public class Request extends android.support.v4.app.Fragment {
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
 
-        prepareCheckoutData(matricle,month,year);
-
-
 
     }
 
+    private void loadSaveRequest(){
+
+        final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
+
+        final String [] months=getResources().getStringArray(R.array.months);
+
+        //Send request to the server with the user token, matricle,month and year
+        // Tag used to cancel the request
+        final String tag_json_obj = "json_obj_req";
+
+        // SqLite database handler
+        db = new DatabaseHelper(getActivity());
+
+        // Fetching user verification token from sqlite
+        HashMap<String, String> user = db.getUserDetails();
+        final String token = user.get("verification_token");
 
 
+        //Passing login parameters
+        Map<String,String> params = new HashMap<>();
+        params.put("token",token);
+
+
+        JSONObject user_params = new JSONObject(params);
+
+        final JsonObjectRequest jsonObjReq = new JsonObjectRequest(com.android.volley.Request.Method.POST,
+                Appconfig.URL_REQUEST_SAVED, user_params,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d(TAG, "httpresponse: "+response.toString());
+
+                        try {
+                            //checking for authorization error
+                                boolean error = response.getBoolean("authorized");
+
+                                //checking for request error
+                                if (error){
+                                    /**
+                                     * user token correct
+                                     * Gathering data for the saved request
+                                     */
+                                    JSONArray savedArray = response.getJSONArray("saved");
+
+                                    Log.d(TAG, "loadsaveRequest: "+savedArray.toString());
+
+
+                                    checkoutList.clear();
+                                    for (int i =0; i<savedArray.length();i++) {
+                                        JSONObject jsonObject = savedArray.getJSONObject(i);
+
+                                        Checkout checkout = new Checkout();
+                                        checkout.setMatricle(jsonObject.getString("matricule"));
+                                        int month = Integer.parseInt(jsonObject.getString("month"));
+                                        String requestMonth = months[month-1];
+                                        checkout.setMonth(requestMonth);
+                                        checkout.setYear(jsonObject.getString("year"));
+
+                                        checkoutList.add(checkout);
+                                    }
+
+                                    checkoutAdapter.notifyDataSetChanged();
+                                    progressDialog.dismiss();
+
+
+                                }else{
+                                    /**
+                                     * Creating an activity to display the user error info\
+                                     */
+
+                                    progressDialog.dismiss();
+
+                                }
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                // hide the progress dialog
+                progressDialog.dismiss();
+            }
+        });
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
+        }
 
     }

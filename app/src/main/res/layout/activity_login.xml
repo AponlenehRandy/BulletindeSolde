@@ -7,13 +7,13 @@
     android:fitsSystemWindows="true">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:paddingTop="56dp"
+        android:orientation="vertical"
         android:paddingLeft="24dp"
-        android:paddingRight="24dp">
+        android:paddingRight="24dp"
+        android:paddingTop="56dp">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -26,8 +26,8 @@
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp">
 
             <EditText
                 android:id="@+id/login_email"
@@ -41,8 +41,8 @@
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp">
 
             <EditText
                 android:id="@+id/login_password"
@@ -57,22 +57,21 @@
             android:id="@+id/btn_login"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
-            android:padding="12dp"
+            android:layout_marginTop="24dp"
             android:onClick="loginUser"
-            android:text="@string/login"/>
+            android:padding="12dp"
+            android:text="@string/login" />
 
 
-
-        <TextView android:id="@+id/link_signup"
+        <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:text="@string/no_account_yet_create_one"
             android:gravity="center"
             android:onClick="gotoRegisterUser"
-            android:textSize="16sp"/>
+            android:text="@string/no_account_yet_create_one"
+            android:textSize="16sp" />
 
     </LinearLayout>
 </ScrollView>

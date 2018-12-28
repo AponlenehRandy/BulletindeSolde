@@ -4,48 +4,48 @@
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
-    android:weightSum="4"
     android:orientation="horizontal"
     android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin">
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:weightSum="4">
 
     <TextView
         android:id="@+id/checkout_matricle"
-        android:layout_weight="1"
         android:layout_width="100dp"
         android:layout_height="35dp"
+        android:layout_weight="1"
+        android:gravity="center"
         android:text="matricle"
-        android:textSize="@dimen/textsize"
         android:textAlignment="center"
-        android:gravity="center"/>
+        android:textSize="@dimen/textsize" />
 
     <TextView
         android:id="@+id/checkout_month"
-        android:layout_weight="1"
         android:layout_width="100dp"
         android:layout_height="30dp"
+        android:layout_weight="1"
+        android:gravity="center"
         android:text="month"
-        android:textSize="@dimen/textsize"
         android:textAlignment="center"
-        android:gravity="center"/>
+        android:textSize="@dimen/textsize" />
 
 
     <TextView
         android:id="@+id/checkout_year"
-        android:layout_weight="1"
         android:layout_width="100dp"
         android:layout_height="30dp"
+        android:layout_weight="1"
+        android:gravity="center"
         android:text="year"
-        android:textSize="@dimen/textsize"
         android:textAlignment="center"
-        android:gravity="center"/>
+        android:textSize="@dimen/textsize" />
 
     <ImageView
-        android:clickable="true"
         android:id="@+id/checkoout_delete"
-        android:layout_width="50dp"
+        android:layout_width="100dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
+        android:clickable="true"
         android:gravity="center"
         android:src="@drawable/ic_delete" />
 

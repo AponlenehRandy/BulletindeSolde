@@ -1,39 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_inbox"
+            android:icon="@drawable/pdf_icon"
+            app:actionViewClass="android.widget.TextView"
+            android:title="Inbox" />
+
         <item
             android:id="@+id/nav_Request"
             android:icon="@drawable/ic_request"
+            app:actionViewClass="android.widget.TextView"
             android:title="Request" />
         <item
             android:id="@+id/nav_History"
             android:icon="@drawable/ic_history"
+            app:actionViewClass="android.widget.TextView"
             android:title="History" />
-        <item
-            android:id="@+id/nav_messages"
-            android:icon="@drawable/ic_message"
-            android:title="Message" />
         <item
             android:id="@+id/nav_setting"
             android:icon="@drawable/ic_setting"
             android:title="Setting" />
-        <item
-            android:id="@+id/nav_document"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Document" />
     </group>
 
     <item android:title="Communicate">
         <menu>
             <item
-                android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"
                 android:title="Share" />
             <item
-                android:id="@+id/nav_send"
                 android:icon="@drawable/ic_menu_send"
                 android:title="Send" />
         </menu>

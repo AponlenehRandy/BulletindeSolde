@@ -17,4 +17,6 @@
     <dimen name="horizontal_margin_requestbutton">12dp</dimen>
     <dimen name="heightrequestfields">40dp</dimen>
     <dimen name="activity_margin">16dp</dimen>
+    <dimen name="ic_delete">30dp</dimen>
+    <dimen name="padd_10">0dp</dimen>
 </resources>

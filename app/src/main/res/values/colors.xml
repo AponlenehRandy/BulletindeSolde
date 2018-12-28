@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#147AF3</color>
+    <color name="colorPrimaryDark">#0A62CA</color>
+    <color name="colorAccent">#265ED6</color>
 
     <!-- Screens background color-->
     <color name="bg_screen1">#f64c73</color>
@@ -16,11 +16,15 @@
     <color name="dot_dark_screen3">#2278d4</color>
     <color name="dot_dark_screen4">#a854d4</color>
 
+    <color name="inbox_color">#F6F6F6</color>
+    <color name="inbox_divider">#E2E2E2</color>
+
     <!-- dots active colors -->
     <color name="dot_light_screen1">#f98da5</color>
     <color name="dot_light_screen2">#8cf9eb</color>
     <color name="dot_light_screen3">#93c6fd</color>
     <color name="dot_light_screen4">#e4b5fc</color>
+    <color name="light_gray_background">#D1D1D1</color>
 
     <array name="array_dot_active">
         <item>@color/dot_light_screen1</item>

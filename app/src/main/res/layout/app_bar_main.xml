@@ -7,7 +7,6 @@
     tools:context=".Activities.Activities.MainActivity">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
@@ -29,6 +28,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
+        android:background="@color/colorPrimary"
+        app:backgroundTint="@color/colorPrimary"
+        app:rippleColor="@color/colorPrimaryDark"
         app:srcCompat="@drawable/ic_request" />
 
 </android.support.design.widget.CoordinatorLayout>

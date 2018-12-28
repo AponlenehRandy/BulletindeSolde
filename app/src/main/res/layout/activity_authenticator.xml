@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_login"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -9,59 +7,60 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-        <TextView android:id="@+id/user_l"
+        android:orientation="horizontal">
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:padding="10dp"
-            android:textSize="15sp"
-            android:text="User Id">
-        </TextView>
+            android:text="User Id"
+            android:textSize="15sp"></TextView>
+
         <EditText
             android:id="@+id/user"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true" >
-        </EditText>
+            android:layout_alignParentTop="true"></EditText>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-        <TextView android:id="@+id/password_l"
+        android:orientation="horizontal">
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:padding="10dp"
-            android:textSize="15sp"
-            android:text="Password">
-        </TextView>
+            android:text="Password"
+            android:textSize="15sp"></TextView>
+
         <EditText
             android:id="@+id/password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:inputType="textPassword">
-        </EditText>
+            android:inputType="textPassword"></EditText>
     </LinearLayout>
 
     <Button
-        android:id="@+id/login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
         android:onClick="login"
+        android:padding="10dp"
         android:text="LOGIN"></Button>
+
     <Button
-        android:id="@+id/create_acc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
         android:onClick="createAccount"
+        android:padding="10dp"
         android:text="Create Account"></Button>
 
 </LinearLayout>

@@ -16,7 +16,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.randyp.bulletindesolde.Activities.Adapters.HistoryitemAdapter;
 import com.example.randyp.bulletindesolde.Activities.Adapters.InboxItem;
-import com.example.randyp.bulletindesolde.Activities.Adapters.InboxItemAdapter;
 import com.example.randyp.bulletindesolde.Activities.AppController.AppController;
 import com.example.randyp.bulletindesolde.Activities.AppController.Appconfig;
 import com.example.randyp.bulletindesolde.Activities.Database.Model.DatabaseHelper;
@@ -75,7 +74,7 @@ public class History extends android.support.v4.app.Fragment {
     private void prepareInboxData() {
         final ProgressDialog progressDialog = new ProgressDialog(getActivity());
         progressDialog.setCancelable(false);
-        progressDialog.setMessage("Loading...");
+        progressDialog.setMessage(getResources().getString(R.string.loading));
         progressDialog.show();
 
         final String [] months=getResources().getStringArray(R.array.months);

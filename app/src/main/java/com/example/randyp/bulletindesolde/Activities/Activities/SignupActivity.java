@@ -6,7 +6,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -122,28 +121,28 @@ public class SignupActivity extends AppCompatActivity
 
 
         if (name.isEmpty() || name.length() < 3) {
-            nameText.setError("at least 3 characters");
+            nameText.setError(getResources().getString(R.string.name_error));
             valid = false;
         } else {
             nameText.setError(null);
         }
 
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emailText.setError("enter a valid email address");
+            emailText.setError(getResources().getString(R.string.email_error));
             valid = false;
         } else {
             emailText.setError(null);
         }
 
         if (password.isEmpty() || password.length() < 6 ) {
-            passwordText.setError("The password must be at least 6 characters");
+            passwordText.setError(getResources().getString(R.string.password_error));
             valid = false;
         } else {
             passwordText.setError(null);
         }
 
         if (!passwordverification.equals(password)){
-            passwordverficationText.setError("Password input doesn't match");
+            passwordverficationText.setError(getResources().getString(R.string.password_mismatch));
             valid=false;
         }else {
             passwordverficationText.setError(null);
@@ -188,7 +187,6 @@ public class SignupActivity extends AppCompatActivity
 
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d(TAG, "onResponse: "+response.toString());
                         pDialog.hide();
 
                         try {

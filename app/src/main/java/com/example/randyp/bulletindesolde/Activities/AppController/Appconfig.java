@@ -18,7 +18,7 @@ public class Appconfig {
     public static String URL_DELETE_REQUEST = "https://www.bulletindesolde.com/api/request/delete";
 
     //server url for payment
-    public static String URL_PAYMENT = "https://www.bulletindesolde.com/api/request/checkout";
+    public static String URL_PAYMENT = "https://www.bulletindesolde.com/api/checkout/payment";
 
     //server url for pending request
     public static String URL_REQUEST_PENDING = "https://www.bulletindesolde.com/api/request/pending";
@@ -37,6 +37,11 @@ public class Appconfig {
 
     //server url for delete validated payslip
     public static String URL_RESTORE_VALIDATED = "https://www.bulletindesolde.com/api/validation/restore";
+
+    //server url for delete validated payslip
+    public static String URL_CHECKOUT = "https://www.bulletindesolde.com/api/request/checkout";
+
+
 
 
 }

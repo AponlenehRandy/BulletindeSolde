@@ -90,7 +90,7 @@ public class Inbox extends android.support.v4.app.Fragment implements RecyclerIt
     private void prepareInboxData() {
         final ProgressDialog progressDialog = new ProgressDialog(getActivity());
         progressDialog.setCancelable(false);
-        progressDialog.setMessage("Loading...");
+        progressDialog.setMessage(getResources().getString(R.string.loading));
         progressDialog.show();
 
         final String [] months=getResources().getStringArray(R.array.months);
@@ -206,7 +206,7 @@ public class Inbox extends android.support.v4.app.Fragment implements RecyclerIt
 
             final ProgressDialog progressDialog = new ProgressDialog(view.getRootView().getContext());
             progressDialog.setCancelable(false);
-            progressDialog.setMessage("Deleting request...");
+            progressDialog.setMessage(getResources().getString(R.string.deleting_request));
             progressDialog.show();
 
             //Send request to the server with the user token, matricle,month and year
@@ -272,7 +272,9 @@ public class Inbox extends android.support.v4.app.Fragment implements RecyclerIt
                                                                     mAdapter.restoreItem(deletedItem, deletedIndex);
                                                                 }else{
                                                                     //something went wrong
-                                                                    Toast.makeText(view.getContext(), "Oops!Something went Wrong", Toast.LENGTH_SHORT).show();
+                                                                    Toast.makeText(view.getContext(),
+                                                                            view.getContext().getResources().getString(R.string.server_error),
+                                                                            Toast.LENGTH_SHORT).show();
                                                                 }
                                                             } catch (JSONException e) {
                                                                 e.printStackTrace();
@@ -301,7 +303,9 @@ public class Inbox extends android.support.v4.app.Fragment implements RecyclerIt
                                     // undo is selected, restore the deleted item
                                     mAdapter.removeItem(viewHolder.getAdapterPosition());
                                     mAdapter.restoreItem(deletedItem, deletedIndex);
-                                    Toast.makeText(view.getContext(),"Oops! Something Went Wrong. Try again later", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(view.getContext(),
+                                            view.getContext().getResources().getString(R.string.server_error),
+                                            Toast.LENGTH_SHORT).show();
 
                                 }
                             } catch (JSONException e) {

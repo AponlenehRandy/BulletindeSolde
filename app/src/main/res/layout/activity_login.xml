@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/dot_light_screen2"
+    android:background="@color/inbox_color"
     android:fitsSystemWindows="true">
 
     <LinearLayout
@@ -59,6 +59,8 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
             android:layout_marginTop="24dp"
+            android:textColor="@android:color/white"
+            android:background="@color/colorPrimary"
             android:onClick="loginUser"
             android:padding="12dp"
             android:text="@string/login" />

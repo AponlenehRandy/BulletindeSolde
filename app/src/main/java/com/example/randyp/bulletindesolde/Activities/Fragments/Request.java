@@ -53,6 +53,7 @@ public class Request extends android.support.v4.app.Fragment {
     private CheckoutAdapter checkoutAdapter;
     RecyclerView recyclerView;
     private DatabaseHelper db;
+    Checkout_bottom_sheetFragment bottom_sheetFragment;
 
     @Nullable
     @Override
@@ -122,8 +123,77 @@ public class Request extends android.support.v4.app.Fragment {
         checkOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Checkout_bottom_sheetFragment checkout_bottom_sheetFragment = Checkout_bottom_sheetFragment.newInstance();
-                checkout_bottom_sheetFragment.show(getFragmentManager(),"add_checkout_bottom_sheet");
+
+                final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                progressDialog.setCancelable(false);
+                progressDialog.setMessage(getResources().getString(R.string.loading));
+                progressDialog.show();
+
+                final String [] months=getResources().getStringArray(R.array.months);
+
+                //Send request to the server with the user token, matricle,month and year
+                // Tag used to cancel the request
+                final String tag_json_obj = "json_obj_req";
+
+                // SqLite database handler
+                db = new DatabaseHelper(getActivity());
+
+                // Fetching user verification token from sqlite
+                HashMap<String, String> user = db.getUserDetails();
+                final String token = user.get("verification_token");
+
+
+                //Passing login parameters
+                Map<String,String> params = new HashMap<>();
+                params.put("token",token);
+
+
+                JSONObject user_params = new JSONObject(params);
+
+                final JsonObjectRequest jsonObjReq = new JsonObjectRequest(com.android.volley.Request.Method.POST,
+                        Appconfig.URL_CHECKOUT, user_params,
+                        new Response.Listener<JSONObject>() {
+
+                            @Override
+                            public void onResponse(JSONObject response) {
+
+                                try {
+                                    //checking for authorization error
+                                    boolean error = response.getBoolean("status");
+
+                                    //checking for request error
+                                    if (error){
+                                        /**
+                                         * Fetching data from the server to display the invoice
+                                         */
+
+                                        bottom_sheetFragment = new Checkout_bottom_sheetFragment();
+                                        bottom_sheetFragment.show(getFragmentManager(), bottom_sheetFragment.getTag());
+
+                                        progressDialog.dismiss();
+
+
+                                    }else{
+                                        /**
+                                         * Creating an activity to display the user error info\
+                                         */
+                                        progressDialog.dismiss();
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // hide the progress dialog
+                        progressDialog.dismiss();
+                    }
+                });
+
+                // Adding request to request queue
+                AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
             }
         });
 
@@ -317,7 +387,7 @@ public class Request extends android.support.v4.app.Fragment {
 
         final ProgressDialog progressDialog = new ProgressDialog(getActivity());
         progressDialog.setCancelable(false);
-        progressDialog.setMessage("Loading...");
+        progressDialog.setMessage(getResources().getString(R.string.loading));
         progressDialog.show();
 
         final String [] months=getResources().getStringArray(R.array.months);

@@ -91,12 +91,11 @@ public class CheckoutAdapter extends RecyclerView.Adapter<CheckoutAdapter.MyView
                             request_month = month.getText().toString().trim();
 
                             int indexNum = Arrays.asList(months).indexOf(request_month)+1;
-                            Toast.makeText(view.getContext(),"month index = "+indexNum,Toast.LENGTH_SHORT).show();
                             request_year = year.getText().toString();
 
                             final ProgressDialog progressDialog = new ProgressDialog(view.getRootView().getContext());
                             progressDialog.setCancelable(false);
-                            progressDialog.setMessage("Deleting request...");
+                            progressDialog.setMessage(view.getContext().getResources().getString(R.string.deleting_request));
                             progressDialog.show();
 
                             //Send request to the server with the user token, matricle,month and year
@@ -141,7 +140,7 @@ public class CheckoutAdapter extends RecyclerView.Adapter<CheckoutAdapter.MyView
                                                 }else {
                                                     //Request not deleted and something went wrong
                                                     progressDialog.dismiss();
-                                                 //  Toast.makeText(view.getContext(),"Oops! Something Went Wrong. Try again later", Toast.LENGTH_SHORT).show();
+                                                 Toast.makeText(view.getContext(),view.getContext().getResources().getString(R.string.server_error), Toast.LENGTH_SHORT).show();
 
                                                 }
                                             } catch (JSONException e) {

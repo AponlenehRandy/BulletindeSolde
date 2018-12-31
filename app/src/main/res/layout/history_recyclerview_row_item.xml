@@ -75,7 +75,7 @@
             android:layout_gravity="center"
             android:layout_weight="0.2"
             android:textAlignment="center"
-            android:text="Pending"/>
+            android:text="@string/pending"/>
 
     </LinearLayout>
 

@@ -111,14 +111,14 @@ public class LoginActivity extends AppCompatActivity
         String password = passwordText.getText().toString();
 
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emailText.setError("enter a valid email address");
+            emailText.setError(getResources().getString(R.string.email_error));
             valid = false;
         } else {
             emailText.setError(null);
         }
 
         if (password.isEmpty() || password.length() < 6) {
-            passwordText.setError("The password must be at least 6 characters");
+            passwordText.setError(getResources().getString(R.string.password_error));
             valid = false;
         } else {
             passwordText.setError(null);
@@ -155,7 +155,6 @@ public class LoginActivity extends AppCompatActivity
 
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d(TAG, "onResponse: "+response.toString());
                         pDialog.dismiss();
 
                         try {

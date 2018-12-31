@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity
         userEmail.setText(email);
 
         //add this line to display request form when the activity is loaded
-        displaySelectionScreen(R.id.nav_inbox);
+        displaySelectionScreen(R.id.nav_Request);
     }
 
 

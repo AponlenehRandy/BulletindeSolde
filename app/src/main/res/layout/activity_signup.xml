@@ -2,7 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/dot_light_screen2"
+    android:background="@color/inbox_color"
     android:fitsSystemWindows="true">
 
     <LinearLayout
@@ -11,13 +11,13 @@
         android:orientation="vertical"
         android:paddingLeft="24dp"
         android:paddingRight="24dp"
-        android:paddingTop="56dp">
+        android:paddingTop="5dp">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="72dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="@dimen/credential_spacing"
             app:srcCompat="@drawable/bds_xs_150_40" />
 
         <!--  Name Label -->
@@ -114,16 +114,17 @@
             android:id="@+id/btn_signup"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginBottom="@dimen/credential_spacing"
+            android:layout_marginTop="@dimen/credential_spacing"
             android:onClick="registerUser"
             android:padding="12dp"
+            android:background="@color/colorPrimary"
             android:text="@string/create_account" />
 
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="@dimen/credential_spacing"
             android:gravity="center"
             android:onClick="gotoLoginUser"
             android:text="@string/already_a_member_login"

@@ -20,7 +20,6 @@ import com.example.randyp.bulletindesolde.R;
 
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,7 +101,7 @@ public class InboxItemAdapter extends RecyclerView.Adapter<InboxItemAdapter.MyVi
                     String url = "https://www.bulletindesolde.com/api/request/download/666666J-3-2015-5831-1545911259.pdf";
 
                     final ProgressDialog pDialog = new ProgressDialog(view.getContext());
-                    pDialog.setMessage("Downloading file...");
+                    pDialog.setMessage(view.getContext().getResources().getString(R.string.downloading_file));
                     pDialog.show();
 
                     JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,

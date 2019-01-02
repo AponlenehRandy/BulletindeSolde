@@ -92,4 +92,6 @@
     <string name="your_suggestion">Vos suggestions</string>
     <string name="downloading">Téléchargement...</string>
     <string name="payslip_request_failed">La demande du bulletin a échoué</string>
+    <string name="app_crashed">Dysfonctionnement de l\'App</string>
+    <string name="downloading_file">Téléchargement du fichier</string>
 </resources>

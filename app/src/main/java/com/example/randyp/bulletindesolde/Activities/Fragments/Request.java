@@ -152,6 +152,8 @@ public class Request extends android.support.v4.app.Fragment {
                             @Override
                             public void onResponse(JSONObject response) {
 
+                                Log.d(TAG, "onResponse: " + response.toString());
+
                                 try {
                                     //checking for authorization error
                                     boolean error = response.getBoolean("status");
@@ -161,13 +163,13 @@ public class Request extends android.support.v4.app.Fragment {
                                         /**
                                          * Fetching data from the server to display the invoice
                                          */
+                                        if (response.getBoolean("hassaved")) {
+                                            bottom_sheetFragment = new Checkout_bottom_sheetFragment();
+                                            bottom_sheetFragment.show(getFragmentManager(), bottom_sheetFragment.getTag());
 
-                                        bottom_sheetFragment = new Checkout_bottom_sheetFragment();
-                                        bottom_sheetFragment.show(getFragmentManager(), bottom_sheetFragment.getTag());
-
+                                            progressDialog.dismiss();
+                                        }
                                         progressDialog.dismiss();
-
-
                                     } else {
                                         /**
                                          * Creating an activity to display the user error info\

@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
@@ -35,25 +36,24 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Request extends android.support.v4.app.Fragment {
     private static final String TAG = "Request";
-    Spinner month,year;
-    EditText matricle;
+    Spinner month, year;
+    EditText matricule;
     Button add_to_cart;
     Button checkOut;
-    List monthList =new ArrayList<String>();
-    List yearList =new ArrayList<String>();
+    List monthList = new ArrayList<String>();
+    List yearList = new ArrayList<String>();
+    RecyclerView recyclerView;
+    Checkout_bottom_sheetFragment bottom_sheetFragment;
     //checkout recycler view
     private List<Checkout> checkoutList = new ArrayList<>();
     private CheckoutAdapter checkoutAdapter;
-    RecyclerView recyclerView;
     private DatabaseHelper db;
-    Checkout_bottom_sheetFragment bottom_sheetFragment;
 
     @Nullable
     @Override
@@ -61,20 +61,14 @@ public class Request extends android.support.v4.app.Fragment {
                              Bundle savedInstanceState) {
 
         //creating a view to instantiate ui widget from the xml file
-        View view = inflater.inflate(R.layout.request_main,container,false);
+        View view = inflater.inflate(R.layout.request_main, container, false);
 
 
         month = view.findViewById(R.id.request_month);
         year = view.findViewById(R.id.request_year);
-        matricle=view.findViewById(R.id.request_matricle);
-        add_to_cart=view.findViewById(R.id.add_to_cart);
+        matricule = view.findViewById(R.id.request_matricle);
+        add_to_cart = view.findViewById(R.id.add_to_cart);
         checkOut = view.findViewById(R.id.checkout);
-
-        // Initializing an ArrayAdapter for the months and the year
-        final Calendar calendar=Calendar.getInstance();
-        final int current_year = calendar.get(Calendar.YEAR);
-        final int current_month = calendar.get(Calendar.MONTH);
-        final int current_day = calendar.get(Calendar.DAY_OF_MONTH);
 
         // SqLite database handler
         db = new DatabaseHelper(getActivity());
@@ -87,38 +81,39 @@ public class Request extends android.support.v4.app.Fragment {
         add_to_cart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 String charPattern = "[^A-za-z0-9]";
 
-                String requestMatricle = matricle.getText().toString().replaceAll(charPattern, "");
+                String requestMatricule = matricule.getText().toString().replaceAll(charPattern, "");
 
                 String matricleModel1 = "^(\\d{6})([A-za-z]{1})$";
 
                 String matricleModel2 = "^([A-za-z]{1})(\\d{6})$";
 
-                if (requestMatricle.matches(matricleModel1) || requestMatricle.matches(matricleModel2)){
+                if (requestMatricule.matches(matricleModel1) || requestMatricule.matches(matricleModel2)) {
                     // matricule number correct, therefore save request to the server
-                    saveRequest(token ,requestMatricle,
-                            String.valueOf((month.getSelectedItemPosition()+1)),
+                    saveRequest(token, requestMatricule,
+                            String.valueOf((month.getSelectedItemPosition() + 1)),
                             year.getSelectedItem().toString().trim());
-                }else {
-                    //send an alert dialog box to the user for invalid mattriclel number
+                    matricule.setText("");
+                } else {
+                    //send an alert dialog box to the user for invalid matricule number
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
-                    builder.setMessage("Matricle number is invalid")
+                    builder.setMessage(getResources().getString(R.string.Matricule_invalid))
                             .setCancelable(false)
-                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            .setPositiveButton(getResources().getString(R.string.OK), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-
+                                    matricule.setText("");
                                 }
-                            }).setTitle("invalid Matricle");
+                            });
 
                     AlertDialog dialog = builder.create();
                     dialog.show();
                 }
             }
         });
+
 
         checkOut.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,7 +124,7 @@ public class Request extends android.support.v4.app.Fragment {
                 progressDialog.setMessage(getResources().getString(R.string.loading));
                 progressDialog.show();
 
-                final String [] months=getResources().getStringArray(R.array.months);
+                final String[] months = getResources().getStringArray(R.array.months);
 
                 //Send request to the server with the user token, matricle,month and year
                 // Tag used to cancel the request
@@ -144,8 +139,8 @@ public class Request extends android.support.v4.app.Fragment {
 
 
                 //Passing login parameters
-                Map<String,String> params = new HashMap<>();
-                params.put("token",token);
+                Map<String, String> params = new HashMap<>();
+                params.put("token", token);
 
 
                 JSONObject user_params = new JSONObject(params);
@@ -162,7 +157,7 @@ public class Request extends android.support.v4.app.Fragment {
                                     boolean error = response.getBoolean("status");
 
                                     //checking for request error
-                                    if (error){
+                                    if (error) {
                                         /**
                                          * Fetching data from the server to display the invoice
                                          */
@@ -173,7 +168,7 @@ public class Request extends android.support.v4.app.Fragment {
                                         progressDialog.dismiss();
 
 
-                                    }else{
+                                    } else {
                                         /**
                                          * Creating an activity to display the user error info\
                                          */
@@ -198,50 +193,6 @@ public class Request extends android.support.v4.app.Fragment {
         });
 
 
-
-        //adapters for the month and year
-        final ArrayAdapter<String> monthSpinnerAdapter = new ArrayAdapter<String>(
-                this.getActivity(),android.R.layout.simple_spinner_item,monthListCalc(current_day,current_month));
-
-        final ArrayAdapter<String> yearSpinnerAdapter = new ArrayAdapter<String>(
-                this.getActivity(),android.R.layout.simple_spinner_item,YearListCalc(current_year,10));
-
-        monthSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        yearSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        month.setAdapter(monthSpinnerAdapter);
-        year.setAdapter(yearSpinnerAdapter);
-
-        year.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int j, long l) {
-                int selected_year = (int) year.getSelectedItem();
-                String [] months=getResources().getStringArray(R.array.months);
-                if (selected_year!=current_year){
-                    monthList.clear();
-                    for (int i=0;i<months.length;i++){
-                        monthList.add(months[i]);
-                    }
-                }else{
-                    monthList.clear();
-                    if (current_day<25){
-                        for (int i=0; i<current_month;i++){
-                            monthList.add(months[i]);
-                        }
-                    }else {
-                        for (int i=0; i<current_month+1;i++){
-                            monthList.add(months[i]);
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
         // Adapter for recycler view for save payslip
         recyclerView = view.findViewById(R.id.checkout_recycler_view);
         checkoutAdapter = new CheckoutAdapter(checkoutList);
@@ -255,7 +206,7 @@ public class Request extends android.support.v4.app.Fragment {
         return view;
 
     }
-    
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -264,32 +215,25 @@ public class Request extends android.support.v4.app.Fragment {
         getActivity().setTitle(R.string.requestTitle);
     }
 
-    private List<String> monthListCalc(int current_day, int current_month) {
-        String [] months=getResources().getStringArray(R.array.months);
-        if (current_day<25){
-            for (int i=0; i<current_month;i++){
-                monthList.add(months[i]);
-            }
-        }else {
-            for (int i=0; i<current_month+1;i++){
-                monthList.add(months[i]);
-            }
+    private List<String> monthListCalc(int current_month) {
+        String[] months = getResources().getStringArray(R.array.months);
+        for (int i = 0; i < current_month; i++) {
+            monthList.add(months[i]);
         }
-
         return monthList;
     }
 
-    private List<String> YearListCalc(int current_year, int i) {
-        int year=current_year;
+    private List<String> YearListCalc(int current_year, int duration) {
+        int year = current_year;
         yearList.add(current_year);
-        for (i=0;i<10;i++){
-            year=year-1;
+        for (int i = 0; i < duration - 1; i++) {
+            year = year - 1;
             yearList.add(year);
         }
         return yearList;
     }
 
-    private void saveRequest(String token, String matricle,String month,String year){
+    private void saveRequest(String token, String matricule, String month, String year) {
 
         //Send request to the server with the user token, matricle,month and year
         // Tag used to cancel the request
@@ -297,12 +241,11 @@ public class Request extends android.support.v4.app.Fragment {
 
 
         //Passing login parameters
-        Map<String,String> params = new HashMap<>();
-        params.put("token",token);
-        params.put("matricule", matricle);
+        Map<String, String> params = new HashMap<>();
+        params.put("token", token);
+        params.put("matricule", matricule);
         params.put("month", month);
         params.put("year", year);
-
 
 
         JSONObject user_params = new JSONObject(params);
@@ -313,33 +256,34 @@ public class Request extends android.support.v4.app.Fragment {
 
                     @Override
                     public void onResponse(JSONObject response) {
+
                         Log.d(TAG, "onResponse: "+response.toString());
 
 
                         try {
                             //checking for status error
-                            if (response.has("status")){
+                            if (response.has("status")) {
                                 boolean error = response.getBoolean("status");
 
                                 //checking for request error
-                                if (error){
+                                if (error) {
                                     /**
                                      * request succesful
                                      * parsing data to the user request table
                                      */
                                     loadSaveRequest();
-                                    ((MainActivity)getActivity()).initializeCountDrawer();
+                                    ((MainActivity) getActivity()).initializeCountDrawer();
 
-                                }else{
+                                } else {
                                     /**
                                      * Creating an activity to display the user error info\
                                      */
                                 }
                             } //checking for authorization error
-                            else if (response.has("authorized")){
+                            else if (response.has("authorized")) {
                                 boolean authorized = response.getBoolean("authorised");
 
-                                if (!authorized){
+                                if (!authorized) {
                                     //send an alert dialog box to notif the user that he/she is invalid to the account
                                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
@@ -356,8 +300,7 @@ public class Request extends android.support.v4.app.Fragment {
                                     dialog.show();
                                 }
 
-                            }
-                            else {
+                            } else {
 
                                 //Error due to server breakdown
 
@@ -377,20 +320,26 @@ public class Request extends android.support.v4.app.Fragment {
             }
         });
 
+        int MY_SOCKET_TIMEOUT_MS = 15000;
+        int MY_RETRY_ITME = 1;
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(MY_SOCKET_TIMEOUT_MS,
+                MY_RETRY_ITME,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
 
 
     }
 
-    private void loadSaveRequest(){
+    private void loadSaveRequest() {
 
         final ProgressDialog progressDialog = new ProgressDialog(getActivity());
         progressDialog.setCancelable(false);
         progressDialog.setMessage(getResources().getString(R.string.loading));
         progressDialog.show();
 
-        final String [] months=getResources().getStringArray(R.array.months);
+        final String[] months = getResources().getStringArray(R.array.months);
 
         //Send request to the server with the user token, matricle,month and year
         // Tag used to cancel the request
@@ -405,8 +354,8 @@ public class Request extends android.support.v4.app.Fragment {
 
 
         //Passing login parameters
-        Map<String,String> params = new HashMap<>();
-        params.put("token",token);
+        Map<String, String> params = new HashMap<>();
+        params.put("token", token);
 
 
         JSONObject user_params = new JSONObject(params);
@@ -417,58 +366,83 @@ public class Request extends android.support.v4.app.Fragment {
 
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d(TAG, "httpresponse: "+response.toString());
 
                         try {
                             //checking for authorization error
-                                boolean error = response.getBoolean("authorized");
+                            boolean error = response.getBoolean("authorized");
 
-                                //checking for request error
-                                if (error){
-                                    /**
-                                     * user token correct
-                                     * Gathering data for the saved request
-                                     */
-                                    JSONArray savedArray = response.getJSONArray("saved");
+                            //checking for request error
+                            if (error) {
+                                /**
+                                 * user token correct
+                                 * Gathering data for the saved request
+                                 */
+                                JSONArray savedArray = response.getJSONArray("saved");
+                                JSONObject obj = response.getJSONObject("periods");
+                                final int current_year = obj.getInt("current_year");
+                                int duration = obj.getInt("duration");
+                                final int current_month = obj.getInt("current_month");
+                                //Attaching values to the year spinner
+                                final ArrayAdapter<String> yearSpinnerAdapter = new ArrayAdapter<String>(
+                                        getContext(), android.R.layout.simple_spinner_item, YearListCalc(current_year, duration));
+                                yearSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                year.setAdapter(yearSpinnerAdapter);
+                                //Attaching values for the months
+                                final ArrayAdapter<String> monthSpinnerAdapter = new ArrayAdapter<String>(
+                                        getContext(), android.R.layout.simple_spinner_item, monthListCalc(current_month));
+                                monthSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                month.setAdapter(monthSpinnerAdapter);
+                                year.setOnItemSelectedListener(
+                                        new AdapterView.OnItemSelectedListener() {
+                                            @Override
+                                            public void onItemSelected(AdapterView<?> adapterView, View view, int j, long l) {
+                                                int selected_year = (int) year.getSelectedItem();
+                                                String[] months = getResources().getStringArray(R.array.months);
+                                                if (selected_year != current_year) {
+                                                    monthList.clear();
+                                                    for (int i = 0; i < months.length; i++) {
+                                                        monthList.add(months[i]);
+                                                    }
+                                                } else {
+                                                    monthList.clear();
+                                                    for (int i = 0; i < current_month; i++) {
+                                                        monthList.add(months[i]);
+                                                    }
+                                                }
+                                            }
 
-                                    Log.d(TAG, "loadsaveRequest: "+savedArray.toString());
+                                            @Override
+                                            public void onNothingSelected(AdapterView<?> adapterView) {
 
+                                            }
+                                        });
 
-                                    checkoutList.clear();
-                                    for (int i =0; i<savedArray.length();i++) {
-                                        JSONObject jsonObject = savedArray.getJSONObject(i);
-
-                                        Checkout checkout = new Checkout();
-                                        checkout.setMatricle(jsonObject.getString("matricule"));
-                                        int month = Integer.parseInt(jsonObject.getString("month"));
-                                        String requestMonth = months[month-1];
-                                        checkout.setMonth(requestMonth);
-                                        checkout.setYear(jsonObject.getString("year"));
-
-                                        checkoutList.add(checkout);
-                                    }
-
-                                    checkoutAdapter.notifyDataSetChanged();
-                                    progressDialog.dismiss();
-
-
-                                }else{
-                                    /**
-                                     * Creating an activity to display the user error info\
-                                     */
-
-                                    progressDialog.dismiss();
-
+                                checkoutList.clear();
+                                for (int i = 0; i < savedArray.length(); i++) {
+                                    JSONObject jsonObject = savedArray.getJSONObject(i);
+                                    Checkout checkout = new Checkout();
+                                    checkout.setMatricle(jsonObject.getString("matricule"));
+                                    int month = Integer.parseInt(jsonObject.getString("month"));
+                                    String requestMonth = months[month - 1];
+                                    checkout.setMonth(requestMonth);
+                                    checkout.setYear(jsonObject.getString("year"));
+                                    year.setAdapter(yearSpinnerAdapter);
+                                    checkoutList.add(checkout);
                                 }
 
-
+                                checkoutAdapter.notifyDataSetChanged();
+                                progressDialog.dismiss();
+                            } else {
+                                /**
+                                 * Creating an activity to display the user error info\
+                                 */
+                                progressDialog.dismiss();
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
                     }
                 }, new Response.ErrorListener() {
-
             @Override
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
@@ -476,9 +450,14 @@ public class Request extends android.support.v4.app.Fragment {
                 progressDialog.dismiss();
             }
         });
+        int MY_SOCKET_TIMEOUT_MS = 15000;
+        int MY_RETRY_ITME = 1;
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(MY_SOCKET_TIMEOUT_MS,
+                MY_RETRY_ITME,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
-        }
-
     }
+
+}

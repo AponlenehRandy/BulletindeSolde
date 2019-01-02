@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -39,7 +40,7 @@ public class CheckoutAdapter extends RecyclerView.Adapter<CheckoutAdapter.MyView
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.checkout_list_row,parent,false);
+                .inflate(R.layout.checkout_list_row, parent, false);
 
         return new MyViewHolder(itemView);
     }
@@ -58,8 +59,15 @@ public class CheckoutAdapter extends RecyclerView.Adapter<CheckoutAdapter.MyView
         return checkoutList.size();
     }
 
+    // to remove or delete a row
+    private void removeAt(int position) {
+        checkoutList.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, checkoutList.size());
+    }
+
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView matricle,month,year;
+        TextView matricle, month, year;
         ImageView request_delete;
 
         public MyViewHolder(View view) {
@@ -67,8 +75,8 @@ public class CheckoutAdapter extends RecyclerView.Adapter<CheckoutAdapter.MyView
 
             matricle = view.findViewById(R.id.checkout_matricle);
             month = view.findViewById(R.id.checkout_month);
-            year =view.findViewById(R.id.checkout_year);
-            request_delete=view.findViewById(R.id.checkoout_delete);
+            year = view.findViewById(R.id.checkout_year);
+            request_delete = view.findViewById(R.id.checkoout_delete);
             request_delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View view) {
@@ -78,19 +86,19 @@ public class CheckoutAdapter extends RecyclerView.Adapter<CheckoutAdapter.MyView
                      * else do something else
                      */
                     final AlertDialog.Builder alertBox = new AlertDialog.Builder(view.getRootView().getContext());
-                    alertBox.setMessage("Do you really want to delete this request?");
+                    alertBox.setMessage(view.getContext().getResources().getString(R.string.delete_msg));
                     alertBox.setCancelable(false);
                     alertBox.setIcon(R.drawable.ic_info);
-                    alertBox.setPositiveButton("delete", new DialogInterface.OnClickListener() {
+                    alertBox.setPositiveButton(view.getContext().getResources().getString(R.string.delete), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             //Do the actual delete with server response here
-                            String request_matricule,request_month, request_year;
-                            request_matricule=matricle.getText().toString();
-                            final  String [] months = view.getResources().getStringArray(R.array.months);
+                            String request_matricule, request_month, request_year;
+                            request_matricule = matricle.getText().toString();
+                            final String[] months = view.getResources().getStringArray(R.array.months);
                             request_month = month.getText().toString().trim();
 
-                            int indexNum = Arrays.asList(months).indexOf(request_month)+1;
+                            int indexNum = Arrays.asList(months).indexOf(request_month) + 1;
                             request_year = year.getText().toString();
 
                             final ProgressDialog progressDialog = new ProgressDialog(view.getRootView().getContext());
@@ -111,11 +119,11 @@ public class CheckoutAdapter extends RecyclerView.Adapter<CheckoutAdapter.MyView
 
 
                             //Passing login parameters
-                            Map<String,String> params = new HashMap<>();
-                            params.put("token",token);
-                            params.put("matricule",request_matricule);
-                            params.put("year",request_year);
-                            params.put("month",String.valueOf(indexNum));
+                            Map<String, String> params = new HashMap<>();
+                            params.put("token", token);
+                            params.put("matricule", request_matricule);
+                            params.put("year", request_year);
+                            params.put("month", String.valueOf(indexNum));
 
 
                             JSONObject user_params = new JSONObject(params);
@@ -130,17 +138,17 @@ public class CheckoutAdapter extends RecyclerView.Adapter<CheckoutAdapter.MyView
                                                 boolean error = response.getBoolean("status");
 
                                                 //Checking for a successful request delete
-                                                if (error){
+                                                if (error) {
                                                     // request succesful deleted and request removed from request table
                                                     removeAt(getPosition());
                                                     //update the count for the menu items
                                                     //((MainActivity)view.getRootView().getContext()).initializeCountDrawer();
                                                     progressDialog.dismiss();
 
-                                                }else {
+                                                } else {
                                                     //Request not deleted and something went wrong
                                                     progressDialog.dismiss();
-                                                 Toast.makeText(view.getContext(),view.getContext().getResources().getString(R.string.server_error), Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(view.getContext(), view.getContext().getResources().getString(R.string.server_error), Toast.LENGTH_SHORT).show();
 
                                                 }
                                             } catch (JSONException e) {
@@ -155,9 +163,15 @@ public class CheckoutAdapter extends RecyclerView.Adapter<CheckoutAdapter.MyView
                                 }
                             });
 
-                            AppController.getInstance().addToRequestQueue(jsonObjReq,tag_json_obj);
+                            int MY_SOCKET_TIMEOUT_MS = 15000;
+                            int MY_RETRY_ITME = 1;
+                            jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(MY_SOCKET_TIMEOUT_MS,
+                                    MY_RETRY_ITME,
+                                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+                            AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
                         }
-                    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    }).setNegativeButton(view.getContext().getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             //Do nothing here, cancel the dialog box
@@ -171,13 +185,6 @@ public class CheckoutAdapter extends RecyclerView.Adapter<CheckoutAdapter.MyView
             });
 
         }
-    }
-
-    // to remove or delete a row
-    private void removeAt(int position) {
-        checkoutList.remove(position);
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position,checkoutList.size());
     }
 
 }

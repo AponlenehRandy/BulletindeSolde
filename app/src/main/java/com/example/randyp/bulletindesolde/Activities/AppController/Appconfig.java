@@ -42,6 +42,4 @@ public class Appconfig {
     public static String URL_CHECKOUT = "https://www.bulletindesolde.com/api/request/checkout";
 
 
-
-
 }

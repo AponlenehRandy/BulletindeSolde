@@ -17,7 +17,7 @@ public class LoginsuccessActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loginsuccess);
 
-        next =findViewById(R.id.btn_next);
+        next = findViewById(R.id.btn_next);
 
         next.setOnClickListener(new View.OnClickListener() {
             @Override

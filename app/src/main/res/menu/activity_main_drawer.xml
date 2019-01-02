@@ -8,13 +8,13 @@
 
         <item
             android:id="@+id/nav_inbox"
-            android:icon="@drawable/pdf_icon"
+            android:icon="@drawable/ic_pdf"
             app:actionViewClass="android.widget.TextView"
             android:title="@string/InboxTitle" />
 
         <item
             android:id="@+id/nav_Request"
-            android:icon="@drawable/ic_request"
+            android:icon="@drawable/ic_request_icon"
             app:actionViewClass="android.widget.TextView"
             android:title="@string/requestTitle" />
         <item
@@ -28,18 +28,18 @@
             android:title="@string/settingTitle" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/communicate">
         <menu>
             <item
-                android:icon="@drawable/ic_menu_share"
+                android:id="@+id/nav_contact_us"
+                android:icon="@drawable/ic_contact_us"
                 android:title="@string/Contact_us" />
-            <item
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
         </menu>
     </item>
 
     <item
+        android:id="@+id/nav_about"
+        android:icon="@drawable/ic_about"
         android:title="@string/about_us">
     </item>
 

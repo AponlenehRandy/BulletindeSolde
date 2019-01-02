@@ -57,7 +57,9 @@
         <activity android:name=".Activities.Activities.SignupSuccessActivity" />
         <activity android:name=".Activities.Activities.AuthenticatorActivity" />
         <activity android:name=".Activities.Activities.CreateAccountActivity" />
-        <activity android:name=".Activities.Activities.InternetError"></activity>
+        <activity android:name=".Activities.Activities.InternetError" />
+        <activity android:name=".Activities.Activities.Compose" />
+        <activity android:name=".Activities.Activities.Contact_us"></activity>
     </application>
 
 </manifest>

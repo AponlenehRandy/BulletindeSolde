@@ -11,12 +11,11 @@ import android.text.TextUtils;
 
 public class BDSAuthenticator extends AbstractAccountAuthenticator {
 
-    // Authentication Service context
-    private final Context mContext;
-
     public static final String PASSWORD = "password";
     public static final String ADD_ACCOUNT = "addAccount";
     public static final String TOKEN_TYPE = "full access";
+    // Authentication Service context
+    private final Context mContext;
 
 
     public BDSAuthenticator(Context context) {

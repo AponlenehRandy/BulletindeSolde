@@ -44,7 +44,7 @@ public class History extends android.support.v4.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.history_main,container,false);
+        View view = inflater.inflate(R.layout.history_main, container, false);
 
         recyclerView = view.findViewById(R.id.recycler_view_history);
 
@@ -77,7 +77,7 @@ public class History extends android.support.v4.app.Fragment {
         progressDialog.setMessage(getResources().getString(R.string.loading));
         progressDialog.show();
 
-        final String [] months=getResources().getStringArray(R.array.months);
+        final String[] months = getResources().getStringArray(R.array.months);
 
         //Send request to the server with the user token, matricle,month and year
         // Tag used to cancel the request
@@ -92,8 +92,8 @@ public class History extends android.support.v4.app.Fragment {
 
 
         //Passing login parameters
-        Map<String,String> params = new HashMap<>();
-        params.put("token",token);
+        Map<String, String> params = new HashMap<>();
+        params.put("token", token);
 
 
         JSONObject user_params = new JSONObject(params);
@@ -105,37 +105,37 @@ public class History extends android.support.v4.app.Fragment {
                     @Override
                     public void onResponse(JSONObject response) {
 
-                        Log.d(TAG, "validated: "+response.toString());
+                        Log.d(TAG, "validated: " + response.toString());
 
                         try {
                             //checking for authorization error
                             boolean error = response.getBoolean("authorized");
 
                             //checking for request error
-                            if (error){
+                            if (error) {
                                 /**
                                  * user token correct
                                  * Gathering data for the validated request
                                  */
                                 JSONArray validatedArray = response.getJSONArray("pending");
 
-                                if (validatedArray.length()==0){
+                                if (validatedArray.length() == 0) {
                                     /**
                                      * display a page showing there is no history ro display for the user
                                      */
 
 
-                                }else{
+                                } else {
                                     list.clear();
-                                    for (int i =0; i<validatedArray.length();i++) {
+                                    for (int i = 0; i < validatedArray.length(); i++) {
                                         JSONObject jsonObject = validatedArray.getJSONObject(i);
 
-                                        Log.d(TAG, "loadvalided: "+jsonObject.toString());
+                                        Log.d(TAG, "loadvalided: " + jsonObject.toString());
 
                                         InboxItem inboxitem = new InboxItem();
                                         inboxitem.setMatricule(jsonObject.getString("matricule"));
                                         int month = Integer.parseInt(jsonObject.getString("month"));
-                                        String requestMonth = months[month-1];
+                                        String requestMonth = months[month - 1];
                                         inboxitem.setMonth(requestMonth);
                                         inboxitem.setYear(jsonObject.getString("year"));
                                         inboxitem.setDate(jsonObject.getString("date"));
@@ -145,12 +145,11 @@ public class History extends android.support.v4.app.Fragment {
                                 }
 
 
-
                                 mAdapter.notifyDataSetChanged();
                                 progressDialog.dismiss();
 
 
-                            }else{
+                            } else {
                                 /**
                                  * Creating an activity to display the user error info\
                                  */

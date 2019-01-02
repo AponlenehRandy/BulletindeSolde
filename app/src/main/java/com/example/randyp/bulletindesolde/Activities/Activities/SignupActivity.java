@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -32,20 +33,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SignupActivity extends AppCompatActivity
-        implements ConnectivityReceiver.ConnectivityReceiverListener{
+        implements ConnectivityReceiver.ConnectivityReceiverListener {
 
     private static final String TAG = "Signing up";
-    EditText nameText;
-     EditText emailText;
-     EditText passwordText;
-     EditText passwordverficationText;
-     CheckBox checkbox;
-     Button signupButton;
-     TextView loginLink;
-     private SessionManager session;
-     private DatabaseHelper db;
-
     private static final int request_code = 101;
+    EditText nameText;
+    EditText emailText;
+    EditText passwordText;
+    EditText passwordverficationText;
+    CheckBox checkbox;
+    Button signupButton;
+    TextView loginLink;
+    private SessionManager session;
+    private DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +73,7 @@ public class SignupActivity extends AppCompatActivity
 
     }
 
-    public void gotoLoginUser(View view){
+    public void gotoLoginUser(View view) {
         // Start the Signup activity
         startActivity(new Intent(SignupActivity.this,
                 LoginActivity.class));
@@ -82,17 +82,17 @@ public class SignupActivity extends AppCompatActivity
 
     public void registerUser(View view) {
 
-        signupButton=findViewById(R.id.btn_signup);
+        signupButton = findViewById(R.id.btn_signup);
 
-        if (!validate()){
+        if (!validate()) {
             return;
         }
 
         signupButton.setEnabled(false);
 
-        nameText =findViewById(R.id.name);
-        emailText=findViewById(R.id.email);
-        passwordText=findViewById(R.id.password);
+        nameText = findViewById(R.id.name);
+        emailText = findViewById(R.id.email);
+        passwordText = findViewById(R.id.password);
 
         String name = nameText.getText().toString();
         String email = emailText.getText().toString();
@@ -100,17 +100,17 @@ public class SignupActivity extends AppCompatActivity
 
         // TODO: Implement your own signup logic here.
 
-        registerUser(name,email,password);
+        registerUser(name, email, password);
     }
 
 
     private boolean validate() {
         boolean valid = true;
 
-        nameText =findViewById(R.id.name);
-        emailText=findViewById(R.id.email);
-        passwordText=findViewById(R.id.password);
-        passwordverficationText=findViewById(R.id.password_verify);
+        nameText = findViewById(R.id.name);
+        emailText = findViewById(R.id.email);
+        passwordText = findViewById(R.id.password);
+        passwordverficationText = findViewById(R.id.password_verify);
         checkbox = findViewById(R.id.agreement_checkbox);
 
 
@@ -134,22 +134,22 @@ public class SignupActivity extends AppCompatActivity
             emailText.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 6 ) {
+        if (password.isEmpty() || password.length() < 6) {
             passwordText.setError(getResources().getString(R.string.password_error));
             valid = false;
         } else {
             passwordText.setError(null);
         }
 
-        if (!passwordverification.equals(password)){
+        if (!passwordverification.equals(password)) {
             passwordverficationText.setError(getResources().getString(R.string.password_mismatch));
-            valid=false;
-        }else {
+            valid = false;
+        } else {
             passwordverficationText.setError(null);
         }
 
-        if (!checkbox.isChecked()){
-            valid=false;
+        if (!checkbox.isChecked()) {
+            valid = false;
             showErrormsg(getResources().getString(R.string.check_agreement_error));
         }
 
@@ -160,7 +160,7 @@ public class SignupActivity extends AppCompatActivity
     /**
      * Function to store user in MySQL database will post params(tag, name,
      * email, password) to register url
-     * */
+     */
     private void registerUser(final String name, final String email,
                               final String password) {
         // Tag used to cancel the request
@@ -173,9 +173,9 @@ public class SignupActivity extends AppCompatActivity
 
 
         //Passing registration parameters
-        Map<String,String> params = new HashMap<>();
-        params.put("name",name);
-        params.put("email",email);
+        Map<String, String> params = new HashMap<>();
+        params.put("name", name);
+        params.put("email", email);
         params.put("password", password);
 
 
@@ -190,21 +190,21 @@ public class SignupActivity extends AppCompatActivity
                         pDialog.hide();
 
                         try {
-                            if (response.has("status")){
+                            if (response.has("status")) {
                                 boolean error = response.getBoolean("status");
 
                                 //checking for registration successful
-                                if (error){
+                                if (error) {
 
 
                                     //Now store the user in the SQLite
-                                    String name=response.getString("name");
+                                    String name = response.getString("name");
                                     String email = response.getString("email");
-                                    String token=response.getString("token");
+                                    String token = response.getString("token");
 
-                                    createAccount(email,password,token);
+                                    createAccount(email, password, token);
 
-                                    db.addUser(name,email,token);
+                                    db.addUser(name, email, token);
 
                                     /**
                                      * Launching the registration success activity upon successful registration
@@ -217,15 +217,14 @@ public class SignupActivity extends AppCompatActivity
                                      * PArsing user's information to be displayed
                                      * on the registration successful activity
                                      */
-                                    intent.putExtra("user_name",name);
-                                    intent.putExtra("user_email",email);
+                                    intent.putExtra("user_name", name);
+                                    intent.putExtra("user_email", email);
 
                                     startActivity(intent);
                                     finish();
 
 
-
-                                }else{
+                                } else {
                                     signupButton.setEnabled(true);
                                     emailText.setText(null);
                                     emailText.setError(getResources()
@@ -239,7 +238,7 @@ public class SignupActivity extends AppCompatActivity
                                     showErrormsg(getResources().getString(R.string.registration_error));
 
                                 }
-                            }else {
+                            } else {
                                 //Error due to server break-dowm
                                 signupButton.setEnabled(true);
 
@@ -263,6 +262,12 @@ public class SignupActivity extends AppCompatActivity
             }
         });
 
+        int MY_SOCKET_TIMEOUT_MS = 15000;
+        int MY_RETRY_ITME = 1;
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(MY_SOCKET_TIMEOUT_MS,
+                MY_RETRY_ITME,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
 
@@ -271,19 +276,19 @@ public class SignupActivity extends AppCompatActivity
 
     private void showErrormsg(String error) {
 
-        Toast.makeText(getApplicationContext(),error,Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
     }
 
-    public void createAccount(String email,String password,
-                              String authToken){
+    public void createAccount(String email, String password,
+                              String authToken) {
 
         //Adding an account programmatically on my com.BDS account type
-        String accountype= "com.BDS";
+        String accountype = "com.BDS";
         AccountManager accountManager = AccountManager.get(getApplicationContext());
-        Account account = new Account(email,accountype);
-        accountManager.addAccountExplicitly(account,password,null);
+        Account account = new Account(email, accountype);
+        accountManager.addAccountExplicitly(account, password, null);
         //Saving authentication tokken under the account registered
-        accountManager.setAuthToken(account,"full acces",authToken);
+        accountManager.setAuthToken(account, "full acces", authToken);
 
     }
 
@@ -293,8 +298,8 @@ public class SignupActivity extends AppCompatActivity
             //show nothing if its connected
         } else {
             //move the connection lose activity
-            Intent data = new Intent(this,InternetError.class);
-            startActivityForResult(data,request_code);
+            Intent data = new Intent(this, InternetError.class);
+            startActivityForResult(data, request_code);
         }
     }
 
@@ -325,6 +330,7 @@ public class SignupActivity extends AppCompatActivity
     /**
      * Here is were the varoiuusu action for the connection lose or gain is taken care of
      * using the toast msg as a method of notifying the user for now
+     *
      * @param isConnected
      */
     private void connectionlose(boolean isConnected) {
@@ -332,15 +338,15 @@ public class SignupActivity extends AppCompatActivity
             //show nothing if its connected
         } else {
             //move the connection lose activity
-            Intent data = new Intent(this,InternetError.class);
-            startActivityForResult(data,request_code);
+            Intent data = new Intent(this, InternetError.class);
+            startActivityForResult(data, request_code);
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if ((requestCode == request_code)&&(resultCode==RESULT_OK)){
+        if ((requestCode == request_code) && (resultCode == RESULT_OK)) {
 
         }
     }

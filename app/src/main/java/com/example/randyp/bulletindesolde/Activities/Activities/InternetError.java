@@ -18,12 +18,12 @@ public class InternetError extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_internet_error);
 
-        try_button =findViewById(R.id.internet_try_again);
+        try_button = findViewById(R.id.internet_try_again);
 
     }
 
 
-    public void onclick(View view){
+    public void onclick(View view) {
         //Manually checking internet connection
         checkConnection();
 
@@ -37,9 +37,9 @@ public class InternetError extends AppCompatActivity {
 
     //Method to get back to the calling activity
     private void getBack(boolean isConnected) {
-        if (isConnected){
+        if (isConnected) {
             finish();
-        }else {
+        } else {
             return;
         }
     }
@@ -48,7 +48,7 @@ public class InternetError extends AppCompatActivity {
     public void finish() {
 
         Intent data = new Intent();
-        setResult(RESULT_OK,null);
+        setResult(RESULT_OK, null);
         super.finish();
 
     }

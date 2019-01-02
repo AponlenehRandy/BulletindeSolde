@@ -14,9 +14,8 @@ import com.example.randyp.bulletindesolde.Activities.Sync_framework.BDSRegLoginH
 import com.example.randyp.bulletindesolde.R;
 
 public class AuthenticatorActivity extends AccountAuthenticatorActivity {
-    private AccountManager accountManager;
-
     private final int REQ_REGISTER = 11;
+    private AccountManager accountManager;
 
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -92,7 +91,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK &&  requestCode == REQ_REGISTER) {
+        if (resultCode == RESULT_OK && requestCode == REQ_REGISTER) {
             setLoginResult(data);
         } else
             super.onActivityResult(requestCode, resultCode, data);

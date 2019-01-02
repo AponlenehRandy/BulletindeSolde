@@ -128,7 +128,7 @@
             android:gravity="center"
             android:onClick="gotoLoginUser"
             android:text="@string/already_a_member_login"
-            android:textSize="16dip" />
+            android:textSize="16sp" />
 
     </LinearLayout>
 </ScrollView>

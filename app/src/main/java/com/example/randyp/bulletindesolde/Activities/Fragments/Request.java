@@ -382,16 +382,19 @@ public class Request extends android.support.v4.app.Fragment {
                                 final int current_year = obj.getInt("current_year");
                                 int duration = obj.getInt("duration");
                                 final int current_month = obj.getInt("current_month");
+
                                 //Attaching values to the year spinner
                                 final ArrayAdapter<String> yearSpinnerAdapter = new ArrayAdapter<String>(
                                         getContext(), android.R.layout.simple_spinner_item, YearListCalc(current_year, duration));
                                 yearSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                 year.setAdapter(yearSpinnerAdapter);
+
                                 //Attaching values for the months
                                 final ArrayAdapter<String> monthSpinnerAdapter = new ArrayAdapter<String>(
                                         getContext(), android.R.layout.simple_spinner_item, monthListCalc(current_month));
                                 monthSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                 month.setAdapter(monthSpinnerAdapter);
+
                                 year.setOnItemSelectedListener(
                                         new AdapterView.OnItemSelectedListener() {
                                             @Override

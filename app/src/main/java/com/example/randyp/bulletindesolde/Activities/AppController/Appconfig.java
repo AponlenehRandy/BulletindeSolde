@@ -41,5 +41,8 @@ public class Appconfig {
     //server url for delete validated payslip
     public static String URL_CHECKOUT = "https://www.bulletindesolde.com/api/request/checkout";
 
+    //server url for delete validated payslip
+    public static String URL_CONTACT_US = "https://www.bulletindesolde.com/api/contact";
+
 
 }

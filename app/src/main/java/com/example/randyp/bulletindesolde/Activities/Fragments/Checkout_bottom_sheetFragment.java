@@ -230,29 +230,34 @@ public class Checkout_bottom_sheetFragment extends BottomSheetDialogFragment {
                             if (response.has("expired")) {
                                 momo_number.setText("");
                                 progressDialog.dismiss();
-                                ShowErrorDialog("Waiting time expiresd");
+                                ShowErrorDialog(getView().getResources().getString(R.string.expired));
 
                             } else if (response.has("noholder")) {
                                 momo_number.setText("");
                                 progressDialog.dismiss();
-                                ShowErrorDialog("The telephone number provided is/may not be connected to any MoMo account");
+                                ShowErrorDialog(getView().getResources().getString(R.string.noholder));
 
                             } else if (response.has("nomoney")) {
                                 momo_number.setText("");
                                 progressDialog.dismiss();
-                                ShowErrorDialog("Your moMo account doesn't have enough money to make this payment");
+                                ShowErrorDialog(getView().getResources().getString(R.string.nomoney));
 
                             } else if (response.has("noresource")) {
                                 momo_number.setText("");
                                 progressDialog.dismiss();
-                                ShowErrorDialog("The MoMo account provided may not be valid or is deactivated");
+                                ShowErrorDialog(getView().getResources().getString(R.string.noresorce));
 
                             } else if (response.has("success")){
                                 momo_number.setText("");
                                 //payment successful
                                 progressDialog.dismiss();
-                                ShowErrorDialog("Payment successful.");
-
+                                showSuccessDialog();
+                            } else if (response.has("invalidmomo")) {
+                                momo_number.setText("");
+                                ShowErrorDialog(getView().getResources().getString(R.string.invalid_momo));
+                            } else {
+                                momo_number.setText("");
+                                ShowErrorDialog(getView().getResources().getString(R.string.defaultErro));
                             }
 
                         } catch (JSONException e) {

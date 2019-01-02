@@ -112,6 +112,37 @@
     <string name="_237">(+237)</string>
     <string name="Matricule_invalid">The Matricule number provided is invalid.</string>
     <string name="downloading">Downloading...</string>
+    <string name="write_your_comment_here">Write your comment here</string>
+    <string name="send_feedback">Send feedback</string>
+    <string name="select_category">Select category</string>
+    <string name="tell_us_what_you_think_about_the_bullentindesolde_app_for_improvment">Any problem, enquiry, issues?</string>
+    <string name="have_your_say">Have your Say!</string>
+
+    <string name="app_crashed">App crashed</string>
+    <string name="payslipe_download_failed">Payslip download failed</string>
+    <string name="payslip_request_failed">Payslip request failed</string>
+    <string name="your_suggestion">Your suggestions</string>
+
+    <string name="Question_enquiry">Question/Enquiry</string>
+    <string name="sending_comment">Sending comment...</string>
+    <string name="mesasge_send">Feedback successfully send. Thank you!</string>
+    <string name="invalid_momo">Invalid MoMo number.</string>
+    <string name="noresorce">The MoMo account provided may not be valid or is deactivated</string>
+    <string name="expired">Waiting time expiresd</string>
+    <string name="noholder">The telephone number provided is/may not be connected to any MoMo account</string>
+    <string name="nomoney">Your moMo account doesn\'t have enough money to make this payment</string>
+    <string name="defaultErro">Something went wrong.Try again later.</string>
+    <string name="please_enter_your_comment">Please enter your comment</string>
+
+
+    <string-array name="categoroy">
+        <item>@string/app_crashed</item>
+        <item>@string/payslipe_download_failed</item>
+        <item>@string/payslip_request_failed</item>
+        <item>@string/your_suggestion</item>
+        <item>@string/Question_enquiry</item>
+    </string-array>
+    <string name="downloading_file">Downloading the file</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 </resources>

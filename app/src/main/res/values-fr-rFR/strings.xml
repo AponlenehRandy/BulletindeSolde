@@ -73,4 +73,23 @@
     <string name="start">DÉMARRER</string>
     <string name="_237">(+237)</string>
     <string name="Matricule_invalid">Le matricule fourni n\'est pas valide.</string>
+    <string name="write_your_comment_here">Écrivez votre commentaire ici</string>
+    <string name="send_feedback">Envoyer des commentaires</string>
+    <string name="select_category">Choisir une catégorie</string>
+    <string name="tell_us_what_you_think_about_the_bullentindesolde_app_for_improvment">Un problème, une demande, une question ou des suggestions?</string>
+    <string name="have_your_say">Exprimez-vous!</string>
+    <string name="payslipe_download_failed">Échec du téléchargement du bulletin.</string>
+    <string name="Question_enquiry">Question / enquête</string>
+    <string name="sending_comment">Envoi en cours ...</string>
+    <string name="mesasge_send">Commentaires envoyés avec succès. Je vous remercie!</string>
+    <string name="invalid_momo">Numéro MoMo invalide.</string>
+    <string name="noresorce">Le compte MoMo fourni peut ne pas être valide ou est désactivé</string>
+    <string name="expired">Temps d\'attente expiré</string>
+    <string name="noholder">Le numéro de téléphone fourni est / peut ne pas être connecté à un compte MoMo</string>
+    <string name="nomoney">Votre compte moMo n\'a pas assez d\'argent pour effectuer ce paiement</string>
+    <string name="defaultErro">Quelque chose s\'est mal passé. Réessayez plus tard.</string>
+    <string name="please_enter_your_comment">S\'il vous plaît écrivez votre commentaire</string>
+    <string name="your_suggestion">Vos suggestions</string>
+    <string name="downloading">Téléchargement...</string>
+    <string name="payslip_request_failed">La demande du bulletin a échoué</string>
 </resources>

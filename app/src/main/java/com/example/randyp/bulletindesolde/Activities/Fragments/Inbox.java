@@ -42,19 +42,18 @@ import static com.android.volley.VolleyLog.TAG;
 
 public class Inbox extends android.support.v4.app.Fragment implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
 
+    TextView numb_files;
     private List<InboxItem> inboxList = new ArrayList<>();
     private RecyclerView recyclerView;
     private InboxItemAdapter mAdapter;
     private DatabaseHelper db;
-    TextView numb_files;
-
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.inbox_main,container,false);
+        View view = inflater.inflate(R.layout.inbox_main, container, false);
 
         recyclerView = view.findViewById(R.id.recycler_view);
 
@@ -93,7 +92,7 @@ public class Inbox extends android.support.v4.app.Fragment implements RecyclerIt
         progressDialog.setMessage(getResources().getString(R.string.loading));
         progressDialog.show();
 
-        final String [] months=getResources().getStringArray(R.array.months);
+        final String[] months = getResources().getStringArray(R.array.months);
 
         //Send request to the server with the user token, matricle,month and year
         // Tag used to cancel the request
@@ -108,8 +107,8 @@ public class Inbox extends android.support.v4.app.Fragment implements RecyclerIt
 
 
         //Passing login parameters
-        Map<String,String> params = new HashMap<>();
-        params.put("token",token);
+        Map<String, String> params = new HashMap<>();
+        params.put("token", token);
 
 
         JSONObject user_params = new JSONObject(params);
@@ -121,38 +120,38 @@ public class Inbox extends android.support.v4.app.Fragment implements RecyclerIt
                     @Override
                     public void onResponse(JSONObject response) {
 
-                        Log.d(TAG, "validated: "+response.toString());
+                        Log.d(TAG, "validated: " + response.toString());
 
                         try {
                             //checking for authorization error
                             boolean error = response.getBoolean("authorized");
 
                             //checking for request error
-                            if (error){
+                            if (error) {
                                 /**
                                  * user token correct
                                  * Gathering data for the validated request
                                  */
                                 JSONArray validatedArray = response.getJSONArray("validated");
 
-                                if (validatedArray.length()==0){
+                                if (validatedArray.length() == 0) {
                                     /**
                                      * Launch the request payslip screen
                                      */
                                     //((MainActivity)getActivity()).displaySelectionScreen(R.id.nav_Request);
 
-                                }else{
+                                } else {
                                     inboxList.clear();
-                                    for (int i =0; i<validatedArray.length();i++) {
+                                    for (int i = 0; i < validatedArray.length(); i++) {
                                         JSONObject jsonObject = validatedArray.getJSONObject(i);
 
-                                        Log.d(TAG, "loadvalided: "+jsonObject.toString());
+                                        Log.d(TAG, "loadvalided: " + jsonObject.toString());
 
                                         InboxItem inboxitem = new InboxItem();
 
                                         inboxitem.setMatricule(jsonObject.getString("matricule"));
                                         int month = Integer.parseInt(jsonObject.getString("month"));
-                                        String requestMonth = months[month-1];
+                                        String requestMonth = months[month - 1];
                                         inboxitem.setMonth(requestMonth);
                                         inboxitem.setYear(jsonObject.getString("year"));
                                         inboxitem.setDate(jsonObject.getString("date"));
@@ -162,7 +161,7 @@ public class Inbox extends android.support.v4.app.Fragment implements RecyclerIt
                                 }
                                 mAdapter.notifyDataSetChanged();
                                 progressDialog.dismiss();
-                            }else{
+                            } else {
                                 /**
                                  * Creating an activity to display the user error info\
                                  */
@@ -189,7 +188,7 @@ public class Inbox extends android.support.v4.app.Fragment implements RecyclerIt
     public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction, int position) {
         if (viewHolder instanceof InboxItemAdapter.MyViewHolder) {
             // get the removed item name to display it in snack bar
-            final String matricule,month,year;
+            final String matricule, month, year;
             matricule = inboxList.get(viewHolder.getAdapterPosition()).getMatricule();
             month = inboxList.get(viewHolder.getAdapterPosition()).getMonth();
             year = inboxList.get(viewHolder.getAdapterPosition()).getYear();
@@ -198,11 +197,11 @@ public class Inbox extends android.support.v4.app.Fragment implements RecyclerIt
             final InboxItem deletedItem = inboxList.get(viewHolder.getAdapterPosition());
             final int deletedIndex = viewHolder.getAdapterPosition();
 
-            final View view=getActivity().findViewById(R.id.content_frame);
-            final  String [] months = view.getResources().getStringArray(R.array.months);
+            final View view = getActivity().findViewById(R.id.content_frame);
+            final String[] months = view.getResources().getStringArray(R.array.months);
 
 
-            int indexNum = Arrays.asList(months).indexOf(month)+1;
+            int indexNum = Arrays.asList(months).indexOf(month) + 1;
 
             final ProgressDialog progressDialog = new ProgressDialog(view.getRootView().getContext());
             progressDialog.setCancelable(false);
@@ -222,11 +221,11 @@ public class Inbox extends android.support.v4.app.Fragment implements RecyclerIt
 
 
             //Passing login parameters
-            final Map<String,String> params = new HashMap<>();
-            params.put("token",token);
-            params.put("matricule",matricule);
-            params.put("year",year);
-            params.put("month",String.valueOf(indexNum));
+            final Map<String, String> params = new HashMap<>();
+            params.put("token", token);
+            params.put("matricule", matricule);
+            params.put("year", year);
+            params.put("month", String.valueOf(indexNum));
 
 
             final JSONObject user_params = new JSONObject(params);
@@ -241,11 +240,11 @@ public class Inbox extends android.support.v4.app.Fragment implements RecyclerIt
                                 boolean error = response.getBoolean("status");
 
                                 //Checking for a successful request delete
-                                if (error){
+                                if (error) {
                                     /**
                                      * request succesful deleted and request removed from validated table
                                      * show snackbar to undo delete
-                                      */
+                                     */
                                     progressDialog.dismiss();
                                     mAdapter.removeItem(viewHolder.getAdapterPosition());
 
@@ -264,13 +263,13 @@ public class Inbox extends android.support.v4.app.Fragment implements RecyclerIt
                                                             try {
                                                                 boolean error = response.getBoolean("status");
 
-                                                                if (error){
+                                                                if (error) {
                                                                     /**
                                                                      * Serever restoration of the validated payslip completed
                                                                      * restore back the deleted validated payslip
                                                                      */
                                                                     mAdapter.restoreItem(deletedItem, deletedIndex);
-                                                                }else{
+                                                                } else {
                                                                     //something went wrong
                                                                     Toast.makeText(view.getContext(),
                                                                             view.getContext().getResources().getString(R.string.server_error),
@@ -287,7 +286,7 @@ public class Inbox extends android.support.v4.app.Fragment implements RecyclerIt
 
                                                 }
                                             });
-                                            AppController.getInstance().addToRequestQueue(jsonObjectRequest,tag_json_obj);
+                                            AppController.getInstance().addToRequestQueue(jsonObjectRequest, tag_json_obj);
                                         }
                                     });
                                     snackbar.setActionTextColor(Color.YELLOW);
@@ -297,7 +296,7 @@ public class Inbox extends android.support.v4.app.Fragment implements RecyclerIt
                                     //((MainActivity)view.getRootView().getContext()).initializeCountDrawer();
 
 
-                                }else {
+                                } else {
                                     //Request not deleted and something went wrong
                                     progressDialog.dismiss();
                                     // undo is selected, restore the deleted item
@@ -320,7 +319,7 @@ public class Inbox extends android.support.v4.app.Fragment implements RecyclerIt
                 }
             });
 
-            AppController.getInstance().addToRequestQueue(jsonObjReq,tag_json_obj);
+            AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
 
             // remove the item from recycler view
             /**

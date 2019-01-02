@@ -28,14 +28,11 @@
             android:title="@string/settingTitle" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/communicate">
         <menu>
             <item
                 android:icon="@drawable/ic_menu_share"
                 android:title="@string/Contact_us" />
-            <item
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
         </menu>
     </item>
 

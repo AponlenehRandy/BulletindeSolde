@@ -39,7 +39,6 @@
     <string name="InboxTitle">Boîte</string>
     <string name="agreement">J\'accepte les</string>
     <string name="historyTitle">Histoire</string>
-    <string name="start">Ok</string>
     <string name="Feb">Février</string>
     <string name="enter_matricle_month_and_year">Entrez le matricule, sélectionnez le mois et l\'année</string>
     <string name="email">Email</string>
@@ -62,9 +61,16 @@
     <string name="password_error">Le mot de passe doit comporter au moins 6 caractères.</string>
     <string name="name_error">Le nom doit comporter au moins 3 caractères.</string>
     <string name="password_mismatch">Le mot de passe ne correspond pas</string>
-    <string name="Contact_us">Écrivez-nous</string>
+    <string name="Contact_us">Contactez nous</string>
     <string name="about_us">À propos de nous</string>
     <string name="loading">Chargement...</string>
     <string name="deleting_request">Suppression ...</string>
     <string name="downloading_file">Téléchargement du fichier....</string>
+    <string name="cancel">Annuler</string>
+    <string name="delete_msg">Voulez-vous vraiment supprimer cette demande?</string>
+    <string name="OK">OK</string>
+    <string name="mtn_momo_transfer">MTN MoMo Transfer</string>
+    <string name="communicate">Communiquer</string>
+    <string name="start">DÉMARRER</string>
+    <string name="_237">(+237)</string>
 </resources>

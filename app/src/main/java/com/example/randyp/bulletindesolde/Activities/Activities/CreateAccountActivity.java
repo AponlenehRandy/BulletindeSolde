@@ -24,20 +24,20 @@ public class CreateAccountActivity extends AppCompatActivity {
         accountType = getIntent().getStringExtra(AccountManager.KEY_ACCOUNT_TYPE);
     }
 
-    public void createAccount(View view){
+    public void createAccount(View view) {
         final String userId = ((EditText) findViewById(R.id.user)).getText().toString();
         final String passWd = ((EditText) findViewById(R.id.password)).getText().toString();
         final String name = ((EditText) findViewById(R.id.name)).getText().toString();
 
-        if(!BDSRegLoginHelper.validateAccountInfo(name,userId, passWd)){
-            ((TextView)findViewById(R.id.error)).setText("Please Enter Valid Information");
+        if (!BDSRegLoginHelper.validateAccountInfo(name, userId, passWd)) {
+            ((TextView) findViewById(R.id.error)).setText("Please Enter Valid Information");
         }
 
-        String authToken = BDSRegLoginHelper.createAccount(name,userId, passWd);
+        String authToken = BDSRegLoginHelper.createAccount(name, userId, passWd);
         String authTokenType = BDSRegLoginHelper.getTokenType(userId);
 
-        if(authToken.isEmpty()){
-            ((TextView)findViewById(R.id.error)).setText("Account couldn't be registered, please try again.");
+        if (authToken.isEmpty()) {
+            ((TextView) findViewById(R.id.error)).setText("Account couldn't be registered, please try again.");
         }
 
         Bundle data = new Bundle();

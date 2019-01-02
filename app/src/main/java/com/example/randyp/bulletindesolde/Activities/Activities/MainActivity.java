@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
@@ -47,14 +48,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,ConnectivityReceiver.ConnectivityReceiverListener {
+        implements NavigationView.OnNavigationItemSelectedListener, ConnectivityReceiver.ConnectivityReceiverListener {
 
     private static final String TAG = "MainActivity";
-    private DatabaseHelper db;
-    TextView userName, userEmail,InboxCount,RequestCount,HistoryCount;
-    SessionManager session;
-
     private static final int request_code = 102;
+    TextView userName, userEmail, InboxCount, RequestCount, HistoryCount;
+    SessionManager session;
+    private DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +71,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-
-
         // SqLite database handler
         db = new DatabaseHelper(getApplicationContext());
 
@@ -86,7 +84,7 @@ public class MainActivity extends AppCompatActivity
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-            this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -103,11 +101,11 @@ public class MainActivity extends AppCompatActivity
          * history count from teh navigation menue items
          */
 
-        InboxCount=(TextView) MenuItemCompat.getActionView(navigationView.getMenu().
+        InboxCount = (TextView) MenuItemCompat.getActionView(navigationView.getMenu().
                 findItem(R.id.nav_inbox));
-        RequestCount=(TextView) MenuItemCompat.getActionView(navigationView.getMenu().
+        RequestCount = (TextView) MenuItemCompat.getActionView(navigationView.getMenu().
                 findItem(R.id.nav_Request));
-        HistoryCount=(TextView) MenuItemCompat.getActionView(navigationView.getMenu().
+        HistoryCount = (TextView) MenuItemCompat.getActionView(navigationView.getMenu().
                 findItem(R.id.nav_History));
 
         //This method will initialize the count value
@@ -155,7 +153,7 @@ public class MainActivity extends AppCompatActivity
             HashMap<String, String> user = db.getUserDetails();
             String token = user.get("verification_token");
             String email = user.get("email");
-            Logout(token,email);
+            Logout(token, email);
             return true;
         }
 
@@ -173,8 +171,8 @@ public class MainActivity extends AppCompatActivity
 
 
         //Passing login parameters
-        Map<String,String> params = new HashMap<>();
-        params.put("token",token);
+        Map<String, String> params = new HashMap<>();
+        params.put("token", token);
 
 
         JSONObject user_params = new JSONObject(params);
@@ -186,15 +184,15 @@ public class MainActivity extends AppCompatActivity
                     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d(TAG, "onResponse: "+response.toString()+token);
+                        Log.d(TAG, "onResponse: " + response.toString() + token);
                         pDialog.hide();
 
                         try {
-                            if (response.has("status")){
+                            if (response.has("status")) {
                                 boolean error = response.getBoolean("status");
 
                                 //checking for logout successful
-                                if (error){
+                                if (error) {
                                     /**
                                      * Close the login session
                                      */
@@ -206,15 +204,15 @@ public class MainActivity extends AppCompatActivity
 
                                     //removing account under account manager
 
-                                    String accountype= "com.BDS";
+                                    String accountype = "com.BDS";
                                     AccountManager accountManager = AccountManager.get(getApplicationContext());
-                                    Account account = new Account(email,accountype);
+                                    Account account = new Account(email, accountype);
                                     Boolean success = accountManager.removeAccountExplicitly(account);
 
 
-                                    if (success){
+                                    if (success) {
                                         showErrormsg("user account successfully removed in the account manager");
-                                    }else{
+                                    } else {
                                         showErrormsg("failure to remove the account in account manager");
                                     }
 
@@ -226,15 +224,14 @@ public class MainActivity extends AppCompatActivity
                                     startActivity(intent);
                                     finish();
 
-                                }else{
+                                } else {
                                     /**
                                      * Creating an activity to display the user error info\
                                      */
 
 
-
                                 }
-                            }else {
+                            } else {
                                 //Error due to server breakdowm
 
                             }
@@ -254,6 +251,12 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        int MY_SOCKET_TIMEOUT_MS = 15000;
+        int MY_RETRY_ITME = 1;
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(MY_SOCKET_TIMEOUT_MS,
+                MY_RETRY_ITME,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
     }
@@ -268,12 +271,12 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void displaySelectionScreen(int itemId){
+    public void displaySelectionScreen(int itemId) {
 
         //creating the fragment object which is selected
         android.support.v4.app.Fragment fragment = null;
 
-        switch (itemId){
+        switch (itemId) {
             case R.id.nav_inbox:
                 fragment = new Inbox();
                 break;
@@ -289,9 +292,9 @@ public class MainActivity extends AppCompatActivity
         }
 
         //Replacing the fragment
-        if (fragment!=null){
+        if (fragment != null) {
             android.support.v4.app.FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.content_frame,fragment);
+            ft.replace(R.id.content_frame, fragment);
             ft.commit();
         }
 
@@ -302,7 +305,7 @@ public class MainActivity extends AppCompatActivity
 
     private void showErrormsg(String error) {
 
-        Toast.makeText(getApplicationContext(),error,Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -325,6 +328,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Here is were the varoiuusu action for the connection lose or gain is taken care of
      * using the toast msg as a method of notifying the user for now
+     *
      * @param isConnected
      */
     private void connectionlose(boolean isConnected) {
@@ -332,15 +336,15 @@ public class MainActivity extends AppCompatActivity
             //show nothing if its connected
         } else {
             //move the connection lose activity
-            Intent data = new Intent(this,InternetError.class);
-            startActivityForResult(data,request_code);
+            Intent data = new Intent(this, InternetError.class);
+            startActivityForResult(data, request_code);
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if ((requestCode == request_code)&&(resultCode==RESULT_OK)){
+        if ((requestCode == request_code) && (resultCode == RESULT_OK)) {
 
         }
     }
@@ -351,7 +355,7 @@ public class MainActivity extends AppCompatActivity
         getRequestCount();
     }
 
-    private void getInboxCount(){
+    private void getInboxCount() {
         //Send request to the server with the user token, matricle,month and year
         // Tag used to cancel the request
         final String tag_json_obj = "json_obj_req";
@@ -363,8 +367,8 @@ public class MainActivity extends AppCompatActivity
         HashMap<String, String> user = db.getUserDetails();
         final String token = user.get("verification_token");
         //Passing login parameters
-        Map<String,String> params = new HashMap<>();
-        params.put("token",token);
+        Map<String, String> params = new HashMap<>();
+        params.put("token", token);
 
         JSONObject user_params = new JSONObject(params);
 
@@ -381,12 +385,12 @@ public class MainActivity extends AppCompatActivity
                             boolean error = response.getBoolean("authorized");
 
                             //checking for request error
-                            if (error){
+                            if (error) {
                                 JSONArray validatedArray = response.getJSONArray("validated");
 
-                                if (validatedArray.length()!=0){
+                                if (validatedArray.length() != 0) {
                                     InboxCount.setGravity(Gravity.CENTER_VERTICAL);
-                                    InboxCount.setTypeface(null,Typeface.BOLD);
+                                    InboxCount.setTypeface(null, Typeface.BOLD);
                                     InboxCount.setTextColor(getResources().getColor(R.color.colorAccent));
                                     //count is added
                                     String count = String.valueOf(validatedArray.length());
@@ -404,11 +408,17 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        int MY_SOCKET_TIMEOUT_MS = 5000;
+        int MY_RETRY_ITME = 1;
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(MY_SOCKET_TIMEOUT_MS,
+                MY_RETRY_ITME,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
     }
 
-    private void getRequestCount(){
+    private void getRequestCount() {
 
 
         //Send request to the server with the user token, matricle,month and year
@@ -422,8 +432,8 @@ public class MainActivity extends AppCompatActivity
         HashMap<String, String> user = db.getUserDetails();
         final String token = user.get("verification_token");
         //Passing login parameters
-        Map<String,String> params = new HashMap<>();
-        params.put("token",token);
+        Map<String, String> params = new HashMap<>();
+        params.put("token", token);
 
         JSONObject user_params = new JSONObject(params);
 
@@ -440,12 +450,12 @@ public class MainActivity extends AppCompatActivity
                             boolean error = response.getBoolean("authorized");
 
                             //checking for request error
-                            if (error){
+                            if (error) {
                                 JSONArray validatedArray = response.getJSONArray("saved");
 
-                                if (validatedArray.length()!=0){
+                                if (validatedArray.length() != 0) {
                                     RequestCount.setGravity(Gravity.CENTER_VERTICAL);
-                                    RequestCount.setTypeface(null,Typeface.BOLD);
+                                    RequestCount.setTypeface(null, Typeface.BOLD);
                                     RequestCount.setTextColor(getResources().getColor(R.color.colorAccent));
                                     //count is added
                                     String count = String.valueOf(validatedArray.length());
@@ -463,11 +473,17 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        int MY_SOCKET_TIMEOUT_MS = 5000;
+        int MY_RETRY_ITME = 1;
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(MY_SOCKET_TIMEOUT_MS,
+                MY_RETRY_ITME,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
     }
 
-    private void getHistoryCount(){
+    private void getHistoryCount() {
 
 
         //Send request to the server with the user token, matricle,month and year
@@ -481,8 +497,8 @@ public class MainActivity extends AppCompatActivity
         HashMap<String, String> user = db.getUserDetails();
         final String token = user.get("verification_token");
         //Passing login parameters
-        Map<String,String> params = new HashMap<>();
-        params.put("token",token);
+        Map<String, String> params = new HashMap<>();
+        params.put("token", token);
 
         JSONObject user_params = new JSONObject(params);
 
@@ -499,12 +515,12 @@ public class MainActivity extends AppCompatActivity
                             boolean error = response.getBoolean("authorized");
 
                             //checking for request error
-                            if (error){
+                            if (error) {
                                 JSONArray validatedArray = response.getJSONArray("pending");
 
-                                if (validatedArray.length()!=0){
+                                if (validatedArray.length() != 0) {
                                     HistoryCount.setGravity(Gravity.CENTER_VERTICAL);
-                                    HistoryCount.setTypeface(null,Typeface.BOLD);
+                                    HistoryCount.setTypeface(null, Typeface.BOLD);
                                     HistoryCount.setTextColor(getResources().getColor(R.color.colorAccent));
                                     //count is added
                                     String count = String.valueOf(validatedArray.length());
@@ -521,6 +537,12 @@ public class MainActivity extends AppCompatActivity
             public void onErrorResponse(VolleyError error) {
             }
         });
+
+        int MY_SOCKET_TIMEOUT_MS = 5000;
+        int MY_RETRY_ITME = 1;
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(MY_SOCKET_TIMEOUT_MS,
+                MY_RETRY_ITME,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);

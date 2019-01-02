@@ -1,7 +1,7 @@
 package com.example.randyp.bulletindesolde.Activities.Adapters;
 
 public class InboxItem {
-    private String matricule,month,year,date;
+    private String matricule, month, year, date;
 
     public InboxItem() {
     }

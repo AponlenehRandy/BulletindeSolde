@@ -2,7 +2,7 @@ package com.example.randyp.bulletindesolde.Activities.Adapters;
 
 public class Checkout {
 
-    private String Matricle,month,year;
+    private String Matricle, month, year;
 
     public Checkout() {
     }

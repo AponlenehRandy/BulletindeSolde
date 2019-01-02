@@ -32,7 +32,7 @@ public class BDSSyncAdapter extends AbstractThreadedSyncAdapter {
                               SyncResult syncResult) {
 
         try {
-            String authToken = accountManager.blockingGetAuthToken(account, BDSAuthenticator.TOKEN_TYPE,true);
+            String authToken = accountManager.blockingGetAuthToken(account, BDSAuthenticator.TOKEN_TYPE, true);
             /**
              * Use the authToken and write your sync logic.
              * Skip the previous call if authToken is not required

@@ -6,9 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -46,8 +44,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * CRUD Operations for the user table
      */
 
-    public void addUser(String name,String email,String verification_token){
-        SQLiteDatabase db =this.getWritableDatabase();
+    public void addUser(String name, String email, String verification_token) {
+        SQLiteDatabase db = this.getWritableDatabase();
 
         //adding user name in the user table
         ContentValues values = new ContentValues();
@@ -68,7 +66,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Getting user data from database
-     * */
+     */
     public HashMap<String, String> getUserDetails() {
         HashMap<String, String> user = new HashMap<String, String>();
         String selectQuery = "SELECT  * FROM " + User.TABLE_USER;
@@ -90,7 +88,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Re crate database Delete all tables and create them again
-     * */
+     */
     public void deleteUsers() {
         SQLiteDatabase db = this.getWritableDatabase();
         // Delete All Rows

@@ -3,23 +3,20 @@ package com.example.randyp.bulletindesolde.Activities.Database.Model;
 public class User {
 
     public static final String TABLE_USER = "userinfo";
-    
+
     //Synchronised from the host server
-    public static final String USER_ID="id";
-    public static final String USER_NAME="name";
-    public static final String USER_EMAIL="email";
-    public static final String USER__VERIFICATION_TOKEN="verification_token";
-
-    private int id;
-    private String name,email,verification_token;
-
-
+    public static final String USER_ID = "id";
+    public static final String USER_NAME = "name";
+    public static final String USER_EMAIL = "email";
+    public static final String USER__VERIFICATION_TOKEN = "verification_token";
     //Create table SQL query
-    public static final String CREATE_TABLE_USER="CREATE TABLE " + TABLE_USER + "("
+    public static final String CREATE_TABLE_USER = "CREATE TABLE " + TABLE_USER + "("
             + USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
             + USER_NAME + " TEXT,"
             + USER_EMAIL + " TEXT,"
             + USER__VERIFICATION_TOKEN + " TEXT" + ")";
+    private int id;
+    private String name, email, verification_token;
 
     public User() {
     }

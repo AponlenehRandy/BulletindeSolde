@@ -1,8 +1,8 @@
 package com.example.randyp.bulletindesolde.Activities.Sync_framework;
 
 public class BDSRegLoginHelper {
-    
-    
+
+
     public static String authenticate(String email, String password) {
         return null;
     }

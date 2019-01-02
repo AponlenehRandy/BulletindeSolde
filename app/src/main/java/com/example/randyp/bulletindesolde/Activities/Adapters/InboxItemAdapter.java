@@ -36,7 +36,7 @@ public class InboxItemAdapter extends RecyclerView.Adapter<InboxItemAdapter.MyVi
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.inbox_recyclerview_row_item,parent,false);
+                .inflate(R.layout.inbox_recyclerview_row_item, parent, false);
 
         return new MyViewHolder(itemView);
     }
@@ -58,21 +58,35 @@ public class InboxItemAdapter extends RecyclerView.Adapter<InboxItemAdapter.MyVi
         return inboxList.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder{
+    public void removeItem(int position) {
+        inboxList.remove(position);
+        // notify the item removed by position
+        // to perform recycler view delete animations
+        // NOTE: don't call notifyDataSetChanged()
+        notifyItemRemoved(position);
+    }
 
-        public TextView number,matricule,month,year,date;
-        public ImageView item_delete,item_download;
+    public void restoreItem(InboxItem inboxItem, int position) {
+        inboxList.add(position, inboxItem);
+        // notify item added by position
+        notifyItemInserted(position);
+    }
+
+    public class MyViewHolder extends RecyclerView.ViewHolder {
+
+        public TextView number, matricule, month, year, date;
+        public ImageView item_delete, item_download;
         public RelativeLayout viewBackground, viewForeground;
 
         public MyViewHolder(View view) {
             super(view);
 
-            matricule=view.findViewById(R.id.item_matricule);
+            matricule = view.findViewById(R.id.item_matricule);
             month = view.findViewById(R.id.item_month);
-            year=view.findViewById(R.id.item_year);
+            year = view.findViewById(R.id.item_year);
             date = view.findViewById(R.id.item_date);
-            item_download=view.findViewById(R.id.item_download);
-            item_delete=view.findViewById(R.id.item_delete);
+            item_download = view.findViewById(R.id.item_download);
+            item_delete = view.findViewById(R.id.item_delete);
 
             viewBackground = view.findViewById(R.id.view_background);
             viewForeground = view.findViewById(R.id.view_foreground);
@@ -139,21 +153,6 @@ public class InboxItemAdapter extends RecyclerView.Adapter<InboxItemAdapter.MyVi
 
 
         }
-    }
-
-
-    public void removeItem(int position) {
-        inboxList.remove(position);
-        // notify the item removed by position
-        // to perform recycler view delete animations
-        // NOTE: don't call notifyDataSetChanged()
-        notifyItemRemoved(position);
-    }
-
-    public void restoreItem(InboxItem inboxItem, int position) {
-        inboxList.add(position, inboxItem);
-        // notify item added by position
-        notifyItemInserted(position);
     }
 
 }

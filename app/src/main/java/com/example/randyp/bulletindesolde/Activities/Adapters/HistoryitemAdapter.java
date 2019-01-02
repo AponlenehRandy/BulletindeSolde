@@ -24,7 +24,7 @@ public class HistoryitemAdapter extends RecyclerView.Adapter<HistoryitemAdapter.
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.history_recyclerview_row_item,parent,false);
+                .inflate(R.layout.history_recyclerview_row_item, parent, false);
 
         return new MyViewHolder(itemView);
     }
@@ -45,7 +45,7 @@ public class HistoryitemAdapter extends RecyclerView.Adapter<HistoryitemAdapter.
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView matricle,month,year,date;
+        TextView matricle, month, year, date;
         ImageView request_delete;
 
         public MyViewHolder(View view) {
@@ -53,7 +53,7 @@ public class HistoryitemAdapter extends RecyclerView.Adapter<HistoryitemAdapter.
 
             matricle = view.findViewById(R.id.item_matricule);
             month = view.findViewById(R.id.item_month);
-            year =view.findViewById(R.id.item_year);
+            year = view.findViewById(R.id.item_year);
             date = view.findViewById(R.id.item_date);
 
 

@@ -3,8 +3,10 @@ package com.example.randyp.bulletindesolde.Activities.Fragments;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,6 +26,7 @@ import com.example.randyp.bulletindesolde.Activities.Activities.MainActivity;
 import com.example.randyp.bulletindesolde.Activities.AppController.AppController;
 import com.example.randyp.bulletindesolde.Activities.AppController.Appconfig;
 import com.example.randyp.bulletindesolde.Activities.Database.Model.DatabaseHelper;
+import com.example.randyp.bulletindesolde.Activities.Helper.AuthenticateAction;
 import com.example.randyp.bulletindesolde.R;
 
 import org.json.JSONException;
@@ -69,8 +72,6 @@ public class Checkout_bottom_sheetFragment extends BottomSheetDialogFragment {
         momo_number.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-
             }
 
             @Override
@@ -135,33 +136,41 @@ public class Checkout_bottom_sheetFragment extends BottomSheetDialogFragment {
                 Appconfig.URL_CHECKOUT, user_params,
                 new Response.Listener<JSONObject>() {
 
+                    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
                     @Override
                     public void onResponse(JSONObject response) {
 
                         try {
-                            //checking for authorization error
-                            boolean error = response.getBoolean("status");
+                            if (new AuthenticateAction(response).authenticateAction()) {
 
-                            //checking for request error
-                            if (error) {
-                                /**
-                                 * Fetching data from the server to display the invoice
-                                 */
+                                //checking for authorization error
+                                boolean error = response.getBoolean("status");
 
-                                JSONObject jsonObject = response.getJSONObject("invoice");
+                                //checking for request error
+                                if (error) {
+                                    /**
+                                     * Fetching data from the server to display the invoice
+                                     */
 
-                                delivery_time.setText(jsonObject.getString("delivery"));
-                                unit_price_quantity.setText(jsonObject.getString("quantity") + " X " + jsonObject.getString("unitprice"));
-                                charges.setText(jsonObject.getString("charges"));
-                                total_amount.setText(jsonObject.getString("total"));
+                                    JSONObject jsonObject = response.getJSONObject("invoice");
 
-                                progressDialog.dismiss();
+                                    delivery_time.setText(jsonObject.getString("delivery"));
+                                    unit_price_quantity.setText(jsonObject.getString("quantity") + " X " + jsonObject.getString("unitprice"));
+                                    charges.setText(jsonObject.getString("charges"));
+                                    total_amount.setText(jsonObject.getString("total"));
 
+                                    progressDialog.dismiss();
+
+                                } else {
+                                    /**
+                                     * Creating an activity to display the user error info\
+                                     */
+                                    progressDialog.dismiss();
+                                }
                             } else {
-                                /**
-                                 * Creating an activity to display the user error info\
-                                 */
                                 progressDialog.dismiss();
+                                //logging out user because unverified is false
+                                ((MainActivity) getActivity()).Logout();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -218,46 +227,54 @@ public class Checkout_bottom_sheetFragment extends BottomSheetDialogFragment {
                 Appconfig.URL_PAYMENT, user_params,
                 new Response.Listener<JSONObject>() {
 
+                    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
                     @Override
                     public void onResponse(JSONObject response) {
 
                         try {
-                            //checking for authorization error
-                            boolean error = response.getBoolean("status");
-                            /**
-                             * waiting for response to return ot teh user(Succes or vrious responses)
-                             */
-                            if (response.has("expired")) {
-                                momo_number.setText("");
-                                progressDialog.dismiss();
-                                ShowErrorDialog(getView().getResources().getString(R.string.expired));
+                            if (new AuthenticateAction(response).authenticateAction()) {
 
-                            } else if (response.has("noholder")) {
-                                momo_number.setText("");
-                                progressDialog.dismiss();
-                                ShowErrorDialog(getView().getResources().getString(R.string.noholder));
+                                //checking for authorization error
+                                boolean error = response.getBoolean("status");
+                                /**
+                                 * waiting for response to return ot teh user(Succes or vrious responses)
+                                 */
+                                if (response.has("expired")) {
+                                    momo_number.setText("");
+                                    progressDialog.dismiss();
+                                    ShowErrorDialog(getView().getResources().getString(R.string.expired));
 
-                            } else if (response.has("nomoney")) {
-                                momo_number.setText("");
-                                progressDialog.dismiss();
-                                ShowErrorDialog(getView().getResources().getString(R.string.nomoney));
+                                } else if (response.has("noholder")) {
+                                    momo_number.setText("");
+                                    progressDialog.dismiss();
+                                    ShowErrorDialog(getView().getResources().getString(R.string.noholder));
 
-                            } else if (response.has("noresource")) {
-                                momo_number.setText("");
-                                progressDialog.dismiss();
-                                ShowErrorDialog(getView().getResources().getString(R.string.noresorce));
+                                } else if (response.has("nomoney")) {
+                                    momo_number.setText("");
+                                    progressDialog.dismiss();
+                                    ShowErrorDialog(getView().getResources().getString(R.string.nomoney));
 
-                            } else if (response.has("success")){
-                                momo_number.setText("");
-                                //payment successful
-                                progressDialog.dismiss();
-                                showSuccessDialog();
-                            } else if (response.has("invalidmomo")) {
-                                momo_number.setText("");
-                                ShowErrorDialog(getView().getResources().getString(R.string.invalid_momo));
+                                } else if (response.has("noresource")) {
+                                    momo_number.setText("");
+                                    progressDialog.dismiss();
+                                    ShowErrorDialog(getView().getResources().getString(R.string.noresorce));
+
+                                } else if (response.has("success")) {
+                                    momo_number.setText("");
+                                    //payment successful
+                                    progressDialog.dismiss();
+                                    showSuccessDialog();
+                                } else if (response.has("invalidmomo")) {
+                                    momo_number.setText("");
+                                    ShowErrorDialog(getView().getResources().getString(R.string.invalid_momo));
+                                } else {
+                                    momo_number.setText("");
+                                    ShowErrorDialog(getView().getResources().getString(R.string.defaultErro));
+                                }
                             } else {
-                                momo_number.setText("");
-                                ShowErrorDialog(getView().getResources().getString(R.string.defaultErro));
+                                progressDialog.dismiss();
+                                //logging out user because unverified is false
+                                ((MainActivity) getActivity()).Logout();
                             }
 
                         } catch (JSONException e) {

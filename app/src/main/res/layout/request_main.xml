@@ -84,7 +84,7 @@
         <Button
             android:id="@+id/add_to_cart"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/button_height"
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="@dimen/horizontal_margin_requestbutton"
             android:layout_marginRight="@dimen/horizontal_margin_requestbutton"
@@ -147,7 +147,7 @@
             <Button
                 android:id="@+id/checkout"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/button_height"
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginLeft="8dp"

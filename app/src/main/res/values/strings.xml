@@ -4,23 +4,23 @@
     <string name="skip">SKIP</string>
     <string name="start">START</string>
 
-    <string name="slide_1_title">Hello Food!</string>
-    <string name="slide_1_desc">The easiest way to order food from your favourite restaurant!</string>
+    <string name="slide_1_title">Request your payslip</string>
+    <string name="slide_1_desc">Anytime,anywhere request your payslip and Bulletindesolde delivers it</string>
 
-    <string name="slide_2_title">Movie Tickets</string>
-    <string name="slide_2_desc">Book movie tickets for your family and friends!</string>
+    <string name="slide_2_title">Pay with Mobile Money</string>
+    <string name="slide_2_desc">Pay for your payslip delivery with MTN MoMO</string>
 
-    <string name="slide_3_title">Great Discounts</string>
-    <string name="slide_3_desc">Best discounts on every single service we offer!</string>
+    <string name="slide_3_title">Secured Delivery</string>
+    <string name="slide_3_desc">Your payslip is delivered into your email and BDS account</string>
 
-    <string name="slide_4_title">World Travel</string>
-    <string name="slide_4_desc">Book tickets of any transportation and travel the world!</string>
+    <string name="slide_4_title">Delivery Notification</string>
+    <string name="slide_4_desc">Bullentindesolde notifies you by SMS when your payslip is delivered</string>
 
     <string name="name">Name</string>
     <string name="password_verification">Password verification</string>
     <string name="password">Password</string>
     <string name="email">Email</string>
-    <string name="login">Login</string>
+    <string name="login">Log in</string>
     <string name="no_account_yet_create_one">No account yet? Create one</string>
     <string name="already_a_member_login">Already a member? Log in</string>
     <string name="create_account">Create Account</string>
@@ -33,7 +33,7 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="requestTitle">Request</string>
-    <string name="settingTitle">Setting</string>
+    <string name="settingTitle">Profile</string>
     <string name="historyTitle">History</string>
     <string name="input_matricle">Matricule</string>
     <string name="add_to_cart">Add to cart</string>
@@ -68,8 +68,11 @@
     <string name="no_connection">No connection</string>
     <string name="an_internet_error_occured_please_try_again">An internet error occurred, please try again</string>
 
+    <string name="select_month">Select a request month</string>
+    <string name="select_year">Select a request year</string>
 
     <string-array name="months">
+        <item>@string/select_month</item>
         <item>@string/Jan</item>
         <item>@string/Feb</item>
         <item>@string/March</item>
@@ -118,7 +121,7 @@
     <string name="tell_us_what_you_think_about_the_bullentindesolde_app_for_improvment">Any problem, enquiry, issues?</string>
     <string name="have_your_say">Have your Say!</string>
 
-    <string name="app_crashed">App crashed</string>
+    <string name="app_crashed">App malfunction</string>
     <string name="payslipe_download_failed">Payslip download failed</string>
     <string name="payslip_request_failed">Payslip request failed</string>
     <string name="your_suggestion">Your suggestions</string>
@@ -132,7 +135,7 @@
     <string name="noholder">The telephone number provided is/may not be connected to any MoMo account</string>
     <string name="nomoney">Your moMo account doesn\'t have enough money to make this payment</string>
     <string name="defaultErro">Something went wrong.Try again later.</string>
-    <string name="please_enter_your_comment">Please enter your comment</string>
+    <string name="please_enter_your_comment">Write your comment </string>
 
 
     <string-array name="categoroy">
@@ -142,7 +145,40 @@
         <item>@string/your_suggestion</item>
         <item>@string/Question_enquiry</item>
     </string-array>
-    <string name="downloading_file">Downloading the file</string>
+
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="none">None</string>
+
+    <string-array name="sex">
+        <item>@string/none</item>
+        <item>@string/male</item>
+        <item>@string/female</item>
+    </string-array>
+
+
+    <string name="permission_needed">Need Permissions</string>
+    <string name="permssion_msg">This app needs permission to use this feature. You can grant them in app settings.</string>
+    <string name="GOTO_SETTING">GOTO SETTINGS</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="phone">Phone</string>
+    <string name="whatsapp">WhatsApp</string>
+    <string name="location">Location</string>
+    <string name="profile">Profile</string>
+    <string name="editprofile">User profile settings</string>
+    <string name="Name">User\'s name</string>
+    <string name="phone_number">Phone number</string>
+    <string name="whatsapp_number">WhatsApp number</string>
+    <string name="region">Region</string>
+    <string name="address">Address</string>
+    <string name="update_profile">Update profile</string>
+    <string name="old_paasword">Old password</string>
+    <string name="new_password">New password</string>
+    <string name="confirm_new_password">Confirm new password</string>
+    <string name="change_password">Change password</string>
+    <string name="select_gender">Select gender</string>
+    <string name="phone_error">Phone number is invalid</string>
+    <string name="please_wait">Please wait............</string>
 
     <!-- TODO: Remove or change this placeholder text -->
 </resources>

@@ -1,7 +1,9 @@
 package com.example.randyp.bulletindesolde.Activities.Activities;
 
 import android.app.ProgressDialog;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -19,6 +21,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.randyp.bulletindesolde.Activities.AppController.AppController;
 import com.example.randyp.bulletindesolde.Activities.AppController.Appconfig;
 import com.example.randyp.bulletindesolde.Activities.Database.Model.DatabaseHelper;
+import com.example.randyp.bulletindesolde.Activities.Helper.AuthenticateAction;
 import com.example.randyp.bulletindesolde.R;
 
 import org.json.JSONException;
@@ -45,6 +48,15 @@ public class Contact_us extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        toolbar.setNavigationIcon(R.drawable.ic_toolbar_arrow);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
         category_spinner = findViewById(R.id.category);
         comment = findViewById(R.id.comment);
         send_feedback = findViewById(R.id.send_feedback);
@@ -56,6 +68,7 @@ public class Contact_us extends AppCompatActivity {
                     //dont send comment
                 } else {
                     sendFeedback();
+                    comment.setText("");
                 }
             }
         });
@@ -106,23 +119,31 @@ public class Contact_us extends AppCompatActivity {
                 Appconfig.URL_CONTACT_US, user_params,
                 new Response.Listener<JSONObject>() {
 
+                    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
                     @Override
                     public void onResponse(JSONObject response) {
                         pDialog.dismiss();
 
                         try {
-                            if (response.has("status")) {
-                                boolean error = response.getBoolean("status");
-                                if (error) {
-                                    pDialog.dismiss();
-                                    Toast.makeText(getApplicationContext(),
-                                            getResources().getString(R.string.mesasge_send), Toast.LENGTH_LONG).show();
-                                    comment.setText("");
-                                } else {
-                                    pDialog.dismiss();
-                                    Toast.makeText(getApplicationContext(),
-                                            getResources().getString(R.string.an_internet_error_occured_please_try_again), Toast.LENGTH_LONG).show();
+                            if (new AuthenticateAction(response).authenticateAction()) {
+
+                                if (response.has("status")) {
+                                    boolean error = response.getBoolean("status");
+                                    if (error) {
+                                        pDialog.dismiss();
+                                        Toast.makeText(getApplicationContext(),
+                                                getResources().getString(R.string.mesasge_send), Toast.LENGTH_LONG).show();
+                                        comment.setText("");
+                                    } else {
+                                        pDialog.dismiss();
+                                        Toast.makeText(getApplicationContext(),
+                                                getResources().getString(R.string.an_internet_error_occured_please_try_again), Toast.LENGTH_LONG).show();
+                                    }
                                 }
+                            } else {
+                                pDialog.dismiss();
+                                //logging out user because unverified is false
+                                ((MainActivity) getBaseContext()).Logout();
                             }
 
                         } catch (JSONException e) {

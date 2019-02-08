@@ -36,30 +36,59 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".Activities.Activities.WelcomeActivity">
+        <activity
+            android:name=".Activities.Activities.WelcomeActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.Activities.LoginActivity">
+        <activity
+            android:name=".Activities.Activities.LoginActivity"
+            android:screenOrientation="portrait">
             android:label="@string/title_activity_welcome"
             android:theme="@style/AppTheme.NoActionBar"
         </activity>
-        <activity android:name=".Activities.Activities.SignupActivity" />
+        <activity
+            android:name=".Activities.Activities.SignupActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Activities.Activities.MainActivity"
             android:label="@string/title_activity_main"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
-        <activity android:name=".Activities.Activities.InfoActivity" />
-        <activity android:name=".Activities.Activities.LoginsuccessActivity" />
-        <activity android:name=".Activities.Activities.SignupSuccessActivity" />
-        <activity android:name=".Activities.Activities.AuthenticatorActivity" />
-        <activity android:name=".Activities.Activities.CreateAccountActivity" />
-        <activity android:name=".Activities.Activities.InternetError" />
-        <activity android:name=".Activities.Activities.Compose" />
-        <activity android:name=".Activities.Activities.Contact_us"></activity>
+        <activity
+            android:name=".Activities.Activities.InfoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.Activities.LoginsuccessActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.Activities.SignupSuccessActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.Activities.AuthenticatorActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.Activities.CreateAccountActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.Activities.InternetError"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.Activities.Compose"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.Activities.Contact_us"
+            android:parentActivityName=".Activities.Activities.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Activities.Activities.ProfileActivity"
+            android:parentActivityName=".Activities.Activities.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".Activities.Activities.Editprofile"></activity>
     </application>
 
 </manifest>

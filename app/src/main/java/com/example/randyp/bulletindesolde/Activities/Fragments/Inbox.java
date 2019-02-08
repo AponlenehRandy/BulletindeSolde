@@ -2,8 +2,10 @@ package com.example.randyp.bulletindesolde.Activities.Fragments;
 
 import android.app.ProgressDialog;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,12 +21,14 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.randyp.bulletindesolde.Activities.Activities.MainActivity;
 import com.example.randyp.bulletindesolde.Activities.Adapters.InboxItem;
 import com.example.randyp.bulletindesolde.Activities.Adapters.InboxItemAdapter;
 import com.example.randyp.bulletindesolde.Activities.AppController.AppController;
 import com.example.randyp.bulletindesolde.Activities.AppController.Appconfig;
 import com.example.randyp.bulletindesolde.Activities.Database.Model.DatabaseHelper;
 import com.example.randyp.bulletindesolde.Activities.Decoration.MyDividerItemDecoration;
+import com.example.randyp.bulletindesolde.Activities.Helper.AuthenticateAction;
 import com.example.randyp.bulletindesolde.Activities.ItemTouchHelper.RecyclerItemTouchHelper;
 import com.example.randyp.bulletindesolde.R;
 
@@ -117,55 +121,64 @@ public class Inbox extends android.support.v4.app.Fragment implements RecyclerIt
                 Appconfig.URL_REQUEST_VALIDATED, user_params,
                 new Response.Listener<JSONObject>() {
 
+                    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
                     @Override
                     public void onResponse(JSONObject response) {
 
                         Log.d(TAG, "validated: " + response.toString());
 
                         try {
-                            //checking for authorization error
-                            boolean error = response.getBoolean("authorized");
+                            if (new AuthenticateAction(response).authenticateAction()) {
 
-                            //checking for request error
-                            if (error) {
-                                /**
-                                 * user token correct
-                                 * Gathering data for the validated request
-                                 */
-                                JSONArray validatedArray = response.getJSONArray("validated");
+                                //checking for authorization error
+                                boolean error = response.getBoolean("authorized");
 
-                                if (validatedArray.length() == 0) {
+                                //checking for request error
+                                if (error) {
                                     /**
-                                     * Launch the request payslip screen
+                                     * user token correct
+                                     * Gathering data for the validated request
                                      */
-                                    //((MainActivity)getActivity()).displaySelectionScreen(R.id.nav_Request);
+                                    JSONArray validatedArray = response.getJSONArray("validated");
 
-                                } else {
-                                    inboxList.clear();
-                                    for (int i = 0; i < validatedArray.length(); i++) {
-                                        JSONObject jsonObject = validatedArray.getJSONObject(i);
+                                    if (validatedArray.length() == 0) {
+                                        /**
+                                         * Launch the request payslip screen
+                                         */
+                                        //((MainActivity)getActivity()).displaySelectionScreen(R.id.nav_Request);
 
-                                        Log.d(TAG, "loadvalided: " + jsonObject.toString());
+                                    } else {
+                                        inboxList.clear();
+                                        for (int i = 0; i < validatedArray.length(); i++) {
+                                            JSONObject jsonObject = validatedArray.getJSONObject(i);
 
-                                        InboxItem inboxitem = new InboxItem();
+                                            Log.d(TAG, "loadvalided: " + jsonObject.toString());
 
-                                        inboxitem.setMatricule(jsonObject.getString("matricule"));
-                                        int month = Integer.parseInt(jsonObject.getString("month"));
-                                        String requestMonth = months[month - 1];
-                                        inboxitem.setMonth(requestMonth);
-                                        inboxitem.setYear(jsonObject.getString("year"));
-                                        inboxitem.setDate(jsonObject.getString("date"));
+                                            InboxItem inboxitem = new InboxItem();
 
-                                        inboxList.add(inboxitem);
+                                            inboxitem.setMatricule(jsonObject.getString("matricule"));
+                                            int month = Integer.parseInt(jsonObject.getString("month"));
+                                            String requestMonth = months[month - 1];
+                                            inboxitem.setMonth(requestMonth);
+                                            inboxitem.setYear(jsonObject.getString("year"));
+                                            inboxitem.setDate(jsonObject.getString("date"));
+
+                                            inboxList.add(inboxitem);
+                                        }
                                     }
+                                    mAdapter.notifyDataSetChanged();
+                                    progressDialog.dismiss();
+                                } else {
+                                    /**
+                                     * Creating an activity to display the user error info\
+                                     */
+                                    progressDialog.dismiss();
                                 }
-                                mAdapter.notifyDataSetChanged();
-                                progressDialog.dismiss();
                             } else {
-                                /**
-                                 * Creating an activity to display the user error info\
-                                 */
                                 progressDialog.dismiss();
+                                //logging out user because unverified is false
+                                ((MainActivity) getActivity()).Logout();
+
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();

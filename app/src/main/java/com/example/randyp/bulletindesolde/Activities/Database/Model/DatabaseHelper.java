@@ -96,4 +96,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
 
     }
+
+    //updating user's name
+
+    public void updateName(String newName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.rawQuery("UPDATE " + User.TABLE_USER + " SET " + User.USER_NAME + " = " + newName, null);
+    }
 }

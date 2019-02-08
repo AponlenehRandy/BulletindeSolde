@@ -1,12 +1,18 @@
 package com.example.randyp.bulletindesolde.Activities.Activities;
 
+import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -21,6 +27,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,16 +42,24 @@ import com.example.randyp.bulletindesolde.Activities.Database.Model.DatabaseHelp
 import com.example.randyp.bulletindesolde.Activities.Fragments.History;
 import com.example.randyp.bulletindesolde.Activities.Fragments.Inbox;
 import com.example.randyp.bulletindesolde.Activities.Fragments.Request;
-import com.example.randyp.bulletindesolde.Activities.Fragments.Setting;
+import com.example.randyp.bulletindesolde.Activities.Helper.AuthenticateAction;
 import com.example.randyp.bulletindesolde.Activities.InternetCheck.ConnectivityReceiver;
 import com.example.randyp.bulletindesolde.Activities.Preferences.SessionManager;
 import com.example.randyp.bulletindesolde.R;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.DexterError;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.PermissionRequestErrorListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
@@ -55,6 +70,7 @@ public class MainActivity extends AppCompatActivity
     TextView userName, userEmail, InboxCount, RequestCount, HistoryCount;
     SessionManager session;
     private DatabaseHelper db;
+    ImageView userImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +111,16 @@ public class MainActivity extends AppCompatActivity
         View headerView = navigationView.getHeaderView(0);
         userName = headerView.findViewById(R.id.user_name);
         userEmail = headerView.findViewById(R.id.user_email);
+        userImage = headerView.findViewById(R.id.userimage);
+
+        userImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+                drawerLayout.closeDrawer(GravityCompat.START);
+                openUserProfile();
+            }
+        });
 
         /**
          * Retrieving instances of the inbox, request and
@@ -159,6 +185,49 @@ public class MainActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
+    public void Logout() {
+        // Tag used to cancel the request
+        String tag_json_obj = "json_obj_req";
+
+        final ProgressDialog pDialog = new ProgressDialog(this);
+        pDialog.setMessage(getResources().getString(R.string.logging_out));
+        pDialog.setCancelable(false);
+        pDialog.show();
+
+        // SqLite database handler
+        db = new DatabaseHelper(this);
+
+        // Fetching user verification token from sqlite
+        final HashMap<String, String> user = db.getUserDetails();
+        final String email = user.get("email");
+
+        /**
+         * Close the login session
+         */
+
+        session.setLogin(false);
+
+        //delete user data in the user data table
+        db.deleteUsers();
+
+        //removing account under account manager
+
+        String accountype = "com.BDS";
+        AccountManager accountManager = AccountManager.get(getApplicationContext());
+        Account account = new Account(email, accountype);
+        Boolean success = accountManager.removeAccountExplicitly(account);
+
+        Intent intent = new Intent(MainActivity.this,
+                LoginActivity.class);
+        startActivity(intent);
+        finish();
+
+
+        pDialog.dismiss();
+    }
+
 
     private void Logout(final String token, final String email) {
         // Tag used to cancel the request
@@ -267,6 +336,12 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        if (id == R.id.nav_profile) {
+            // Handle the for contact us activity
+            DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+            drawerLayout.closeDrawer(GravityCompat.START);
+            openUserProfile();
+        }
         if (id == R.id.nav_contact_us) {
             // Handle the for contact us activity
             DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
@@ -304,9 +379,6 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_History:
                 fragment = new History();
-                break;
-            case R.id.nav_setting:
-                fragment = new Setting();
                 break;
 
         }
@@ -567,5 +639,178 @@ public class MainActivity extends AppCompatActivity
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
     }
+
+
+    private void requestStoragePermission() {
+        Dexter.withActivity(this)
+                .withPermissions(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        // check if all permissions are granted
+                        if (report.areAllPermissionsGranted()) {
+
+                        }
+
+                        // check for permanent denial of any permission
+                        if (report.isAnyPermissionPermanentlyDenied()) {
+                            // show alert dialog navigating to Settings
+                            showSettingsDialog();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).
+                withErrorListener(new PermissionRequestErrorListener() {
+                    @Override
+                    public void onError(DexterError error) {
+                        Toast.makeText(getApplicationContext(), "Error occurred! ", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .onSameThread()
+                .check();
+    }
+
+
+    /**
+     * Showing Alert Dialog with Settings option
+     * Navigates user to app settings
+     * NOTE: Keep proper title and message depending on your app
+     */
+    public void showSettingsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle(getResources().getString(R.string.permission_needed));
+        builder.setMessage(getResources().getString(R.string.permssion_msg));
+        builder.setPositiveButton(getResources().getString(R.string.GOTO_SETTING), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                openSettings();
+            }
+        });
+        builder.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+
+    }
+
+
+    // navigating user to app settings
+    private void openSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        intent.setData(uri);
+        startActivityForResult(intent, 101);
+    }
+
+    private void openCamera() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, 100);
+    }
+
+    public void openUserProfile() {
+        //http call to gather user information first
+
+        // Tag used to cancel the request
+        final String tag_json_obj = "json_obj_req";
+
+        // SqLite database handler
+        db = new DatabaseHelper(this);
+
+        // Fetching user verification token from sqlite
+        HashMap<String, String> user = db.getUserDetails();
+        final String token = user.get("verification_token");
+        final String email = user.get("email");
+        final String name = user.get("name");
+
+
+        //Passing login parameters
+        Map<String, String> params = new HashMap<>();
+        params.put("token", token);
+
+
+        JSONObject user_params = new JSONObject(params);
+
+        final JsonObjectRequest jsonObjReq = new JsonObjectRequest(com.android.volley.Request.Method.POST,
+                Appconfig.SHOW_PROFILE, user_params,
+                new Response.Listener<JSONObject>() {
+
+                    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try {
+                            if (new AuthenticateAction(response).authenticateAction()) {
+
+                                //checking for status error
+                                boolean error = response.getBoolean("status");
+
+                                //checking for request error
+                                if (error) {
+                                    /**
+                                     * user token correct
+                                     * Gathering data for the profile
+                                     */
+
+                                    JSONObject obj = response.getJSONObject("profile");
+                                    Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                                    intent.putExtra("phone", obj.getString("phone"));
+                                    intent.putExtra("address", obj.getString("address"));
+                                    intent.putExtra("region", obj.getString("region"));
+                                    intent.putExtra("gender", obj.getString("gender"));
+                                    intent.putExtra("email", email);
+                                    intent.putExtra("name", name);
+                                    startActivity(intent);
+
+                                } else {
+                                    //open edit profile page for the user to complete his/her user's information
+                                    Intent intent = new Intent(MainActivity.this, Editprofile.class);
+                                    intent.putExtra("email", email);
+                                    intent.putExtra("name", name);
+                                    intent.putExtra("phone", "");
+                                    intent.putExtra("address", "");
+                                    intent.putExtra("region", "");
+                                    intent.putExtra("gender", "null");
+                                    startActivity(intent);
+                                }
+                            } else {
+                                Logout();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+
+
+            }
+        });
+        int MY_SOCKET_TIMEOUT_MS = 15000;
+        int MY_RETRY_ITME = 1;
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(MY_SOCKET_TIMEOUT_MS,
+                MY_RETRY_ITME,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
+    }
+
+
+
+
+
+
 
 }

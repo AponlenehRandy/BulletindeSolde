@@ -32,7 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/name"
-                android:inputType="textCapWords" />
+                android:inputType="textCapWords|textAutoComplete" />
         </android.support.design.widget.TextInputLayout>
 
         <!-- Email Label -->
@@ -47,7 +47,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/email"
-                android:inputType="textEmailAddress" />
+                android:inputType="textEmailAddress|textAutoComplete" />
         </android.support.design.widget.TextInputLayout>
 
         <!-- Password Label -->
@@ -55,6 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
+            app:passwordToggleEnabled="true"
             android:layout_marginTop="8dp">
 
             <EditText
@@ -70,6 +71,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
+            app:passwordToggleEnabled="true"
             android:layout_marginTop="8dp">
 
             <EditText
@@ -113,11 +115,12 @@
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_signup"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/button_height_main"
             android:layout_marginBottom="@dimen/credential_spacing"
             android:layout_marginTop="@dimen/credential_spacing"
             android:onClick="registerUser"
             android:padding="12dp"
+            android:textColor="@android:color/white"
             android:background="@color/colorPrimary"
             android:text="@string/create_account" />
 

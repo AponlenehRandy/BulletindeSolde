@@ -1,11 +1,13 @@
 package com.example.randyp.bulletindesolde.Activities.Adapters;
 
+import android.Manifest;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,10 +22,19 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.randyp.bulletindesolde.Activities.Activities.MainActivity;
 import com.example.randyp.bulletindesolde.Activities.AppController.AppController;
 import com.example.randyp.bulletindesolde.Activities.AppController.Appconfig;
 import com.example.randyp.bulletindesolde.Activities.Database.Model.DatabaseHelper;
+import com.example.randyp.bulletindesolde.Activities.Helper.AuthenticateAction;
 import com.example.randyp.bulletindesolde.R;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.DexterError;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.PermissionRequestErrorListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -105,111 +116,151 @@ public class InboxItemAdapter extends RecyclerView.Adapter<InboxItemAdapter.MyVi
             item_download.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View view) {
-
-                    final ProgressDialog progressDialog = new ProgressDialog(view.getContext());
-                    progressDialog.setCancelable(false);
-                    progressDialog.setMessage(view.getContext().getResources().getString(R.string.loading));
-                    progressDialog.show();
-
-                    final String[] months = view.getContext().getResources().getStringArray(R.array.months);
-
-                    //Send request to the server with the user token, matricle,month and year
-                    // Tag used to cancel the request
-                    final String tag_json_obj = "json_obj_req";
-
-                    // SqLite database handler
-                    db = new DatabaseHelper(view.getContext());
-
-                    // Fetching user verification token from sqlite
-                    HashMap<String, String> user = db.getUserDetails();
-                    final String token = user.get("verification_token");
-
-                    String request_matricule, request_month, request_year;
-                    request_matricule = matricule.getText().toString().trim();
-                    request_month = month.getText().toString().trim();
-                    int indexNum = Arrays.asList(months).indexOf(request_month) + 1;
-                    request_year = year.getText().toString().trim();
-
-                    //Passing login parameters
-                    Map<String, String> params = new HashMap<>();
-                    params.put("token", token);
-                    params.put("matricule", request_matricule);
-                    params.put("month", String.valueOf(indexNum));
-                    params.put("year", request_year);
-
-                    JSONObject user_params = new JSONObject(params);
-
-                    final JsonObjectRequest jsonObjReq = new JsonObjectRequest(com.android.volley.Request.Method.POST,
-                            Appconfig.URL_DOWNLOAD_PAYSLIP, user_params,
-                            new Response.Listener<JSONObject>() {
-
+                    Dexter.withActivity(((MainActivity) view.getContext()))
+                            .withPermissions(
+                                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            .withListener(new MultiplePermissionsListener() {
                                 @Override
-                                public void onResponse(JSONObject response) {
-                                    Log.d(TAG, "onResponse: " + response.toString());
+                                public void onPermissionsChecked(MultiplePermissionsReport report) {
+                                    // check if all permissions are granted
+                                    if (report.areAllPermissionsGranted()) {
+                                        final ProgressDialog progressDialog = new ProgressDialog(view.getContext());
+                                        progressDialog.setCancelable(false);
+                                        progressDialog.setMessage(view.getContext().getResources().getString(R.string.loading));
+                                        progressDialog.show();
 
-                                    try {
-                                        //checking for authorization error
-                                        boolean error = response.getBoolean("status");
+                                        final String[] months = view.getContext().getResources().getStringArray(R.array.months);
 
-                                        //checking for request error
-                                        if (error) {
-                                            /**
-                                             * user token correct
-                                             * Gathering data for the saved request
-                                             */
+                                        //Send request to the server with the user token, matricle,month and year
+                                        // Tag used to cancel the request
+                                        final String tag_json_obj = "json_obj_req";
 
-                                            String filename = response.getString("filename");
+                                        // SqLite database handler
+                                        db = new DatabaseHelper(view.getContext());
 
-                                            String url = Appconfig.URL_DOWNLOAD_PAYSLIP + "/" + filename;
+                                        // Fetching user verification token from sqlite
+                                        HashMap<String, String> user = db.getUserDetails();
+                                        final String token = user.get("verification_token");
 
-                                            Toast.makeText(view.getContext(), url, Toast.LENGTH_LONG).show();
+                                        String request_matricule, request_month, request_year;
+                                        request_matricule = matricule.getText().toString().trim();
+                                        request_month = month.getText().toString().trim();
+                                        int indexNum = Arrays.asList(months).indexOf(request_month) + 1;
+                                        request_year = year.getText().toString().trim();
 
-                                            progressDialog.dismiss();
+                                        //Passing login parameters
+                                        Map<String, String> params = new HashMap<>();
+                                        params.put("token", token);
+                                        params.put("matricule", request_matricule);
+                                        params.put("month", String.valueOf(indexNum));
+                                        params.put("year", request_year);
 
-                                            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-                                            request.setDescription(view.getResources().getString(R.string.downloading));
-                                            request.setTitle(filename);
-                                            // in order for this if to run, you must use the android 3.2 to compile your app
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                                                request.allowScanningByMediaScanner();
-                                                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                                        JSONObject user_params = new JSONObject(params);
+
+                                        final JsonObjectRequest jsonObjReq = new JsonObjectRequest(com.android.volley.Request.Method.POST,
+                                                Appconfig.URL_DOWNLOAD_PAYSLIP, user_params,
+                                                new Response.Listener<JSONObject>() {
+
+                                                    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
+                                                    @Override
+                                                    public void onResponse(JSONObject response) {
+                                                        Log.d(TAG, "onResponse: " + response.toString());
+
+                                                        try {
+                                                            if (new AuthenticateAction(response).authenticateAction()) {
+
+                                                                //checking for authorization error
+                                                                boolean error = response.getBoolean("status");
+
+                                                                //checking for request error
+                                                                if (error) {
+                                                                    /**
+                                                                     * user token correct
+                                                                     * Gathering data for the saved request
+                                                                     */
+
+                                                                    String filename = response.getString("filename");
+
+                                                                    String url = Appconfig.URL_DOWNLOAD_PAYSLIP + "/" + filename;
+
+                                                                    Toast.makeText(view.getContext(), url, Toast.LENGTH_LONG).show();
+
+                                                                    progressDialog.dismiss();
+
+                                                                    DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+                                                                    request.setDescription(view.getResources().getString(R.string.downloading));
+                                                                    request.setTitle(filename);
+                                                                    // in order for this if to run, you must use the android 3.2 to compile your app
+                                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                                                                        request.allowScanningByMediaScanner();
+                                                                        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                                                                    }
+                                                                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
+
+                                                                    // get download service and enqueue file
+                                                                    DownloadManager manager = (DownloadManager) view.getContext().getSystemService(Context.DOWNLOAD_SERVICE);
+                                                                    manager.enqueue(request);
+
+
+                                                                } else {
+                                                                    /**
+                                                                     * Creating an activity to display the user error info\
+                                                                     */
+                                                                    progressDialog.dismiss();
+                                                                    Toast.makeText(view.getContext(), view.getResources().
+                                                                            getString(R.string.an_internet_error_occured_please_try_again), Toast.LENGTH_LONG).show();
+
+                                                                }
+                                                            } else {
+                                                                progressDialog.dismiss();
+                                                                //logging out user because unverified is false
+                                                                ((MainActivity) view.getContext()).Logout();
+                                                            }
+                                                        } catch (JSONException e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                    }
+                                                }, new Response.ErrorListener() {
+                                            @Override
+                                            public void onErrorResponse(VolleyError error) {
+
+                                                // hide the progress dialog
+                                                progressDialog.dismiss();
                                             }
-                                            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
+                                        });
+                                        int MY_SOCKET_TIMEOUT_MS = 15000;
+                                        int MY_RETRY_ITME = 1;
+                                        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(MY_SOCKET_TIMEOUT_MS,
+                                                MY_RETRY_ITME,
+                                                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
-                                            // get download service and enqueue file
-                                            DownloadManager manager = (DownloadManager) view.getContext().getSystemService(Context.DOWNLOAD_SERVICE);
-                                            manager.enqueue(request);
+                                        // Adding request to request queue
+                                        AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
+                                    }
 
-
-                                        } else {
-                                            /**
-                                             * Creating an activity to display the user error info\
-                                             */
-                                            progressDialog.dismiss();
-                                            Toast.makeText(view.getContext(), view.getResources().
-                                                    getString(R.string.an_internet_error_occured_please_try_again), Toast.LENGTH_LONG).show();
-
-                                        }
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
+                                    // check for permanent denial of any permission
+                                    if (report.isAnyPermissionPermanentlyDenied()) {
+                                        // show alert dialog navigating to Settings
+                                        ((MainActivity) view.getContext()).showSettingsDialog();
                                     }
                                 }
-                            }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
 
-                            // hide the progress dialog
-                            progressDialog.dismiss();
-                        }
-                    });
-                    int MY_SOCKET_TIMEOUT_MS = 15000;
-                    int MY_RETRY_ITME = 1;
-                    jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(MY_SOCKET_TIMEOUT_MS,
-                            MY_RETRY_ITME,
-                            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                                @Override
+                                public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                                    token.continuePermissionRequest();
+                                }
+                            }).
+                            withErrorListener(new PermissionRequestErrorListener() {
+                                @Override
+                                public void onError(DexterError error) {
+                                    Toast.makeText(view.getContext(), "Error occurred! ", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .onSameThread()
+                            .check();
 
-                    // Adding request to request queue
-                    AppController.getInstance().addToRequestQueue(jsonObjReq, tag_json_obj);
+
                 }
             });
 

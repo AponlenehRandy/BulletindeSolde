@@ -3,6 +3,8 @@ package com.example.randyp.bulletindesolde.Activities.Adapters;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,9 +17,11 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.randyp.bulletindesolde.Activities.Activities.MainActivity;
 import com.example.randyp.bulletindesolde.Activities.AppController.AppController;
 import com.example.randyp.bulletindesolde.Activities.AppController.Appconfig;
 import com.example.randyp.bulletindesolde.Activities.Database.Model.DatabaseHelper;
+import com.example.randyp.bulletindesolde.Activities.Helper.AuthenticateAction;
 import com.example.randyp.bulletindesolde.R;
 
 import org.json.JSONException;
@@ -98,7 +102,7 @@ public class CheckoutAdapter extends RecyclerView.Adapter<CheckoutAdapter.MyView
                             final String[] months = view.getResources().getStringArray(R.array.months);
                             request_month = month.getText().toString().trim();
 
-                            int indexNum = Arrays.asList(months).indexOf(request_month) + 1;
+                            int indexNum = Arrays.asList(months).indexOf(request_month);
                             request_year = year.getText().toString();
 
                             final ProgressDialog progressDialog = new ProgressDialog(view.getRootView().getContext());
@@ -131,25 +135,32 @@ public class CheckoutAdapter extends RecyclerView.Adapter<CheckoutAdapter.MyView
                             final JsonObjectRequest jsonObjReq = new JsonObjectRequest(com.android.volley.Request.Method.POST,
                                     Appconfig.URL_DELETE_REQUEST, user_params,
                                     new Response.Listener<JSONObject>() {
+                                        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
                                         @Override
                                         public void onResponse(JSONObject response) {
 
                                             try {
-                                                boolean error = response.getBoolean("status");
+                                                if (new AuthenticateAction(response).authenticateAction()) {
 
-                                                //Checking for a successful request delete
-                                                if (error) {
-                                                    // request succesful deleted and request removed from request table
-                                                    removeAt(getPosition());
-                                                    //update the count for the menu items
-                                                    //((MainActivity)view.getRootView().getContext()).initializeCountDrawer();
-                                                    progressDialog.dismiss();
+                                                    boolean error = response.getBoolean("status");
 
+                                                    //Checking for a successful request delete
+                                                    if (error) {
+                                                        // request succesful deleted and request removed from request table
+                                                        removeAt(getPosition());
+                                                        //update the count for the menu items
+                                                        //((MainActivity)view.getRootView().getContext()).initializeCountDrawer();
+                                                        progressDialog.dismiss();
+
+                                                    } else {
+                                                        //Request not deleted and something went wrong
+                                                        progressDialog.dismiss();
+                                                        Toast.makeText(view.getContext(), view.getContext().getResources().getString(R.string.server_error), Toast.LENGTH_SHORT).show();
+                                                    }
                                                 } else {
-                                                    //Request not deleted and something went wrong
                                                     progressDialog.dismiss();
-                                                    Toast.makeText(view.getContext(), view.getContext().getResources().getString(R.string.server_error), Toast.LENGTH_SHORT).show();
-
+                                                    //logging out user because unverified is false
+                                                    ((MainActivity) view.getContext()).Logout();
                                                 }
                                             } catch (JSONException e) {
                                                 e.printStackTrace();

@@ -199,7 +199,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.7"
                     android:background="@drawable/widget_border"
-                    android:inputType="number"
+                    android:inputType="phone"
                     android:hint="@string/momo_insert"
                     android:textSize="14sp"
                     android:paddingLeft="10dp"/>
@@ -210,7 +210,7 @@
         <Button
             android:enabled="false"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/button_height"
             android:layout_marginTop="5dp"
             android:text="@string/proceed_payment"
             android:textColor="@android:color/white"

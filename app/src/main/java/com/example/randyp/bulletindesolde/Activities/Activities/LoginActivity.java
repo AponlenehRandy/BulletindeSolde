@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -30,6 +31,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity
@@ -53,6 +55,13 @@ public class LoginActivity extends AppCompatActivity
 
         // Manually checking internet connection
         checkConnection();
+
+        findViewById(R.id.forgot_password).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                OpenWebsite();
+            }
+        });
 
 
         //SQLite database handler
@@ -307,6 +316,19 @@ public class LoginActivity extends AppCompatActivity
 
         if ((requestCode == request_code) && (resultCode == RESULT_OK)) {
 
+        }
+    }
+
+    private void OpenWebsite() {
+
+        if (Locale.getDefault().getLanguage().equals("en")) {
+            Uri uri = Uri.parse(Appconfig.FORGOTTEN_PASSWORD_URL_EN);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
+        } else {
+            Uri uri = Uri.parse(Appconfig.FORGOTTEN_PASSWORD_URL_FR);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
         }
     }
 }

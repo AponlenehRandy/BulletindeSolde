@@ -3,11 +3,11 @@
     <dimen name="dots_height">30dp</dimen>
     <dimen name="dots_margin_bottom">20dp</dimen>
     <dimen name="img_width_height">120dp</dimen>
-    <dimen name="slide_title">30sp</dimen>
+    <dimen name="slide_title">20sp</dimen>
     <dimen name="slide_desc">16sp</dimen>
     <dimen name="desc_padding">40dp</dimen>
     <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_horizontal_margin">10dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="nav_header_vertical_spacing">8dp</dimen>
     <dimen name="nav_header_height">176dp</dimen>
@@ -21,4 +21,8 @@
     <dimen name="padd_10">0dp</dimen>
     <dimen name="activity_margin_invoice">2dp</dimen>
     <dimen name="credential_spacing">24dp</dimen>
+    <dimen name="marginTop">10dp</dimen>
+    <dimen name="activity_mmargin">20dp</dimen>
+    <dimen name="button_height">35dp</dimen>
+    <dimen name="button_height_main">40dp</dimen>
 </resources>

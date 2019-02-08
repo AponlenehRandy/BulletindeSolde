@@ -12,7 +12,7 @@
     <string name="login_error">Votre combinaison email / mot de passe est incorrecte.</string>
     <string name="terms">termes et conditions</string>
     <string name="skip">SAUTER</string>
-    <string name="settingTitle">Paramètres</string>
+    <string name="settingTitle">Profile</string>
     <string name="requests">Demandes</string>
     <string name="requestTitle">Demande</string>
     <string name="pending">En attendant</string>
@@ -74,7 +74,7 @@
     <string name="_237">(+237)</string>
     <string name="Matricule_invalid">Le matricule fourni n\'est pas valide.</string>
     <string name="write_your_comment_here">Écrivez votre commentaire ici</string>
-    <string name="send_feedback">Envoyer des commentaires</string>
+    <string name="send_feedback">Envoyer votre commentaire</string>
     <string name="select_category">Choisir une catégorie</string>
     <string name="tell_us_what_you_think_about_the_bullentindesolde_app_for_improvment">Un problème, une demande, une question ou des suggestions?</string>
     <string name="have_your_say">Exprimez-vous!</string>
@@ -88,10 +88,9 @@
     <string name="noholder">Le numéro de téléphone fourni est / peut ne pas être connecté à un compte MoMo</string>
     <string name="nomoney">Votre compte moMo n\'a pas assez d\'argent pour effectuer ce paiement</string>
     <string name="defaultErro">Quelque chose s\'est mal passé. Réessayez plus tard.</string>
-    <string name="please_enter_your_comment">S\'il vous plaît écrivez votre commentaire</string>
+    <string name="please_enter_your_comment">Ecrivez votre commentaire</string>
     <string name="your_suggestion">Vos suggestions</string>
     <string name="downloading">Téléchargement...</string>
     <string name="payslip_request_failed">La demande du bulletin a échoué</string>
     <string name="app_crashed">Dysfonctionnement de l\'App</string>
-    <string name="downloading_file">Téléchargement du fichier</string>
 </resources>

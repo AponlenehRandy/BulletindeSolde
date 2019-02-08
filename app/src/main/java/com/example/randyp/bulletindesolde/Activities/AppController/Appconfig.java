@@ -44,5 +44,17 @@ public class Appconfig {
     //server url for delete validated payslip
     public static String URL_CONTACT_US = "https://www.bulletindesolde.com/api/contact";
 
+    public static String FORGOTTEN_PASSWORD_URL_FR = "https://www.bulletindesolde.com/fr/mot-de-passe/réinitialiser";
+
+    public static String FORGOTTEN_PASSWORD_URL_EN = "https://www.bulletindesolde.com/en/password/reset";
+
+
+    public static String SHOW_PROFILE = "https://www.bulletindesolde.com/api/profile/show";
+
+    public static String UPDATE_PROFILE = "https://www.bulletindesolde.com/api/profile/update";
+
+
+
+
 
 }
